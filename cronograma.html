@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diagnóstico e Cronograma Semanal - Química Orgânica II - UFCG</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --radius: 18px;
+      --border-color: #CBD5E1;
+      --success-green: #059669;
+      --success-green-bg: #ECFDF5;
+      --warning-orange: #D97706;
+      --warning-orange-bg: #FEF3C7;
+      --critical-red: #DC2626;
+      --critical-red-bg: #FEF2F2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* BOTÃO FLUTUANTE DO MENU */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    /* OVERLAY DE ESCURECIMENTO DA TELA */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active { 
+      opacity: 1 !important; 
+      visibility: visible !important; 
+      pointer-events: auto !important;
+    }
+
+    /* SIDEBAR LATERAL FLUTUANTE */
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open { 
+      transform: translateX(0) !important; 
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i { font-size: 1.8rem; color: var(--blue-primary); }
+    .logo-container h1 { font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
+    .logo-container h1 span { color: var(--blue-accent); display: block; font-size: 0.8rem; font-weight: 600; }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover { color: var(--blue-primary); }
+
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .alarm-badge {
+      display: none;
+      margin-left: auto;
+      color: #EF476F;
+      font-size: 1.2rem;
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAlarm {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .main-container {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 5rem;
+      transition: padding 0.3s ease;
+    }
+
+    .top-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      padding: 2.2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+      color: var(--white);
+    }
+
+    .top-banner h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
+    .top-banner p { font-size: 0.95rem; opacity: 0.9; font-weight: 400; }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .card-title i {
+      color: var(--blue-primary);
+      background: var(--blue-light);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-group label { font-size: 0.85rem; font-weight: 700; color: var(--blue-navy); }
+
+    .form-control {
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--gray-light);
+      background: var(--blue-soft);
+      font-size: 0.9rem;
+      outline: none;
+      width: 100%;
+      color: var(--text-dark);
+      transition: border-color 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--blue-primary);
+      background: var(--white);
+    }
+
+    .score-inputs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .score-inputs input { text-align: center; }
+
+    .btn {
+      padding: 0.85rem 1.5rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-blue {
+      background: var(--blue-primary);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-blue:hover { 
+      background: var(--blue-hover);
+      transform: translateY(-1px); 
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--blue-primary);
+      color: var(--blue-primary);
+    }
+
+    .btn-outline:hover { background: var(--blue-light); }
+
+    .btn-danger {
+      background: var(--critical-red);
+      color: white;
+      font-size: 0.78rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+    }
+
+    .btn-danger:hover { background: #b91c1c; }
+
+    .temp-list-container {
+      margin-top: 1rem;
+      border: 1px dashed var(--blue-primary);
+      padding: 1.2rem;
+      border-radius: 14px;
+      background: var(--blue-soft);
+    }
+
+    .temp-list-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--blue-navy);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+    }
+
+    .temp-table {
+      width: 100%;
+      min-width: 580px;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      background: var(--white);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .temp-table th, .temp-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-light);
+    }
+
+    .temp-table th { background: var(--blue-soft); font-weight: 700; color: var(--gray-medium); font-size: 0.75rem; text-transform: uppercase; }
+
+    .btn-delete-item {
+      background: transparent;
+      border: none;
+      color: var(--critical-red);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    .diagnostic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .diag-box {
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--gray-light);
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .diag-box.critical { border-left: 6px solid var(--critical-red); background: var(--critical-red-bg); }
+    .diag-box.warning { border-left: 6px solid var(--warning-orange); background: var(--warning-orange-bg); }
+    .diag-box.good { border-left: 6px solid var(--success-green); background: var(--success-green-bg); }
+
+    .diag-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+    .diag-subject { font-size: 1.05rem; font-weight: 800; color: var(--text-dark); word-break: break-word; }
+    
+    .diag-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 0.28rem 0.6rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .diag-box.critical .diag-tag { background: var(--critical-red); color: white; }
+    .diag-box.warning .diag-tag { background: var(--warning-orange); color: white; }
+    .diag-box.good .diag-tag { background: var(--success-green); color: white; }
+
+    .diag-score { font-size: 0.88rem; font-weight: 600; color: var(--text-dark); }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .day-card {
+      background: var(--white);
+      border-radius: 16px;
+      border: 1px solid var(--gray-light);
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .day-header {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--blue-navy);
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--blue-soft);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .task-item {
+      padding: 0.8rem;
+      border-radius: 10px;
+      background: var(--blue-soft);
+      border: 1px solid var(--blue-light);
+      font-size: 0.83rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .task-item.segundo-plano {
+      border-style: dashed;
+      background: #FFFFFF;
+      opacity: 0.9;
+    }
+
+    .task-item strong { color: var(--blue-navy); word-break: break-word; }
+    
+    .task-badge {
+      align-self: flex-start;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.18rem 0.5rem;
+      border-radius: 6px;
+    }
+
+    .badge-foco { background: var(--blue-light); color: var(--blue-hover); }
+    .badge-secundario { background: var(--gray-light); color: var(--text-dark); }
+    .badge-simulado { background: var(--success-green-bg); color: var(--success-green); }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .history-session-card {
+      border: 1px solid var(--gray-light);
+      border-radius: 14px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      background: var(--blue-soft);
+    }
+
+    .history-session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid var(--gray-light);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .history-session-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--blue-navy);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      word-break: break-word;
+    }
+
+    .custom-topic-box {
+      display: none;
+      background: var(--blue-soft);
+      border: 1px dashed var(--blue-primary);
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 0.5rem;
+      grid-column: 1 / -1;
+    }
+
+    @media (max-width: 992px) {
+      .main-container {
+        padding: 5rem 1.5rem 2rem 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 1.5rem 1.2rem;
+      }
+
+      .top-banner {
+        padding: 1.5rem;
+        border-radius: 16px;
+      }
+
+      .top-banner h1 { font-size: 1.4rem; }
+      .top-banner p { font-size: 0.88rem; }
+
+      .card {
+        padding: 1.2rem;
+        border-radius: 16px;
+        gap: 1.2rem;
+      }
+
+      .form-grid { grid-template-columns: 1fr; }
+      .action-buttons-group { flex-direction: column; width: 100%; }
+      .btn { width: 100%; }
+      .temp-list-container { padding: 0.8rem; }
+    }
+
+    @media (max-width: 480px) {
+      .card-title { font-size: 1.1rem; }
+      .history-session-header { flex-direction: column; align-items: flex-start; }
+      .history-session-header .btn { width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link"><i class="ph ph-house-line"></i> Início</a>
+      <a href="matriz.html" class="nav-link"><i class="ph ph-check-square"></i> Matriz</a>
+      <a href="checklist.html" class="nav-link"><i class="ph ph-check-square"></i> Checklist</a>
+      <a href="cronometro.html" class="nav-link"><i class="ph ph-timer"></i> Cronômetro/Pomodoro</a>
+      <a href="diagnostico.html" class="nav-link active">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+        <i class="ph ph-bell-ringing alarm-badge" id="revisao-alarm-icon" title="Existem revisões atrasadas!"></i>
+      </a>
+      <a href="descompressao.html" class="nav-link"><i class="ph ph-heartbeat"></i> Descompressão</a>
+    </nav>
+  </aside>
+
+  <main class="main-container">
+    <div class="top-banner">
+      <h1>Gerador de Cronograma Semanal</h1>
+      <p>Registre seu desempenho por assunto da disciplina. O sistema pondera a relevância de cada tópico para construir seu plano semanal de estudos personalizado!</p>
+    </div>
+
+    <!-- PAINEL DE REGISTRO MÚLTIPLO DE TESTES -->
+    <div class="card">
+      <div class="card-title">
+        <i class="ph ph-plus-circle"></i> Registrar Questões Resolvidas
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="diag-unidade">Unidade / Módulo</label>
+          <select id="diag-unidade" class="form-control">
+            <option value="">Selecione a unidade...</option>
+            <option value="Unidade I: Aromaticidade e Reações">Unidade I: Aromaticidade e Reações de Aromáticos</option>
+            <option value="Unidade II: Derivados de Ácidos Carboxílicos">Unidade II: Derivados de Ácidos Carboxílicos</option>
+            <option value="Unidade III: Aldeídos e Cetonas">Unidade III: Aldeídos e Cetonas</option>
+            <option value="Unidade IV: Carbono Alfa e Condensações">Unidade IV: Reações no Carbono Alfa e Condensações</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="diag-assunto">Assunto Estudado</label>
+          <select id="diag-assunto" class="form-control" disabled>
+            <option value="">Primeiro selecione a unidade...</option>
+          </select>
+        </div>
+
+        <!-- CAMPOS EXTRAS CASO SEJA SELECIONADO "OUTRO ASSUNTO" -->
+        <div id="box-outro-topico" class="custom-topic-box">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="diag-custom-nome">Nome do Assunto Personalizado</label>
+              <input type="text" id="diag-custom-nome" class="form-control" placeholder="Ex: Espectroscopia de RMN / Síntese Específica">
+            </div>
+            <div class="form-group">
+              <label for="diag-custom-incidencia">Importância / Relevância</label>
+              <select id="diag-custom-incidencia" class="form-control">
+                <option value="Alta">Alta Relevância (Cobrança Alta)</option>
+                <option value="Média" selected>Média Relevância</option>
+                <option value="Baixa">Baixa Relevância</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label>Acertos nas Questões Realizadas (X / Y)</label>
+          <div class="score-inputs">
+            <input type="number" id="diag-acertos" class="form-control" placeholder="Questões Acertadas (X)" min="0">
+            <span style="font-weight: 800; color: var(--gray-medium);">/</span>
+            <input type="number" id="diag-total" class="form-control" placeholder="Total Feito (Y)" min="1">
+          </div>
+        </div>
+
+        <div class="form-group full-width action-buttons-group" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button type="button" id="btn-adicionar-temp" class="btn btn-outline">
+            <i class="ph ph-plus"></i> Adicionar Assunto
+          </button>
+          
+          <button type="button" id="btn-gerar-diagnostico" class="btn btn-blue">
+            <i class="ph ph-cpu"></i> Gerar Diagnóstico e Cronograma Semanal
+          </button>
+        </div>
+      </div>
+
+      <!-- LISTA TEMPORÁRIA DOS ITENS ADICIONADOS -->
+      <div id="temp-container" class="temp-list-container" style="display: none;">
+        <div class="temp-list-title">
+          <i class="ph ph-list-checks"></i> Assuntos Selecionados para Análise:
+        </div>
+        <div class="table-responsive">
+          <table class="temp-table">
+            <thead>
+              <tr>
+                <th>Unidade</th>
+                <th>Assunto</th>
+                <th>Relevância</th>
+                <th>Acertos</th>
+                <th>Aproveitamento</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="temp-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADOS DO DIAGNÓSTICO -->
+    <div class="card">
+      <div class="card-title">
+        <i class="ph ph-clipboard-text"></i> Diagnóstico do Último Teste
+      </div>
+      
+      <div id="diagnostico-resultado-grid" class="diagnostic-grid">
+        <p style="color: var(--gray-medium); font-size: 0.9rem;">Nenhum diagnóstico ativo no momento. Cadastre os assuntos acima para gerar.</p>
+      </div>
+    </div>
+
+    <!-- CRONOGRAMA SEMANAL PERSONALIZADO -->
+    <div class="card">
+      <div class="card-title">
+        <i class="ph ph-calendar-blank"></i> Cronograma Semanal de Estudos
+      </div>
+      <p style="font-size: 0.85rem; color: var(--gray-medium);">
+        Plano inteligente ajustado com base na relevância dos tópicos no programa e na sua evolução histórica:
+      </p>
+
+      <div id="cronograma-semanal-container" class="schedule-grid">
+        <!-- Cronograma gerado via JS -->
+      </div>
+    </div>
+
+    <!-- HISTÓRICO AGRUPADO POR SEÇÃO -->
+    <div class="card">
+      <div class="history-header">
+        <div class="card-title">
+          <i class="ph ph-clock-counter-clockwise"></i> Histórico Agrupado por Sessões de Diagnóstico
+        </div>
+        <button id="btn-limpar-historico" class="btn btn-danger">
+          <i class="ph ph-trash"></i> Apagar Todo Histórico
+        </button>
+      </div>
+
+      <div id="historico-secoes-container" style="margin-top: 1rem;">
+        <!-- Preenchido por seções via JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- SCRIPT GLOBAL DE SINCRONIZAÇÃO DA NUVEM -->
+  <script src="app.js"></script>
+
+  <!-- CONTROLADOR DIRETO DE ABERTURA E FECHAMENTO DO MENU -->
+  <script>
+    (function setupDirectSidebar() {
+      function attachEvents() {
+        const openBtn = document.getElementById('open-sidebar');
+        const closeBtn = document.getElementById('close-sidebar');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+
+        if (!sidebar || !overlay) return;
+
+        function openMenu(e) {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          sidebar.style.transform = 'translateX(0)';
+          sidebar.classList.add('open');
+          overlay.style.opacity = '1';
+          overlay.style.visibility = 'visible';
+          overlay.style.pointerEvents = 'auto';
+          overlay.classList.add('active');
+        }
+
+        function closeMenu(e) {
+          if (e) { e.preventDefault(); e.stopPropagation(); }
+          sidebar.style.transform = 'translateX(-100%)';
+          sidebar.classList.remove('open');
+          overlay.style.opacity = '0';
+          overlay.style.visibility = 'hidden';
+          overlay.style.pointerEvents = 'none';
+          overlay.classList.remove('active');
+        }
+
+        if (openBtn) { openBtn.removeEventListener('click', openMenu); openBtn.addEventListener('click', openMenu); }
+        if (closeBtn) { closeBtn.removeEventListener('click', closeMenu); closeBtn.addEventListener('click', closeMenu); }
+        if (overlay) { overlay.removeEventListener('click', closeMenu); overlay.addEventListener('click', closeMenu); }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachEvents);
+      } else {
+        attachEvents();
+      }
+    })();
+  </script>
+
+  <!-- LÓGICA DA APLICAÇÃO -->
+  <script>
+    // BASE DE DADOS BASEADA NA MATRIZ DE QUÍMICA ORGÂNICA II - UFCG
+    const MATRIZ_ORGANICA2_BANCO = {
+      "Unidade I: Aromaticidade e Reações": [
+        { nome: "Critérios de aromaticidade e Regra de Hückel", peso: 1, prioridade: "Alta" },
+        { nome: "Compostos aromáticos, antiaromáticos, não-aromáticos e heterocíclicos", peso: 1, prioridade: "Alta" },
+        { nome: "Substituição eletrofílica aromática: mecanismo geral, halogenação e nitração", peso: 1, prioridade: "Alta" },
+        { nome: "Sulfonação e alquilação de Friedel-Crafts", peso: 1, prioridade: "Alta" },
+        { nome: "Acilação de Friedel-Crafts e limitações", peso: 2, prioridade: "Média" },
+        { nome: "Benzenos substituídos: Efeito dos substituintes (ativadores e desativadores)", peso: 1, prioridade: "Alta" },
+        { nome: "Orientação orto/para vs meta (efeitos indutivo e de ressonância)", peso: 1, prioridade: "Alta" },
+        { nome: "Síntese de benzenos di/tri-substituídos", peso: 2, prioridade: "Média" }
+      ],
+      "Unidade II: Derivados de Ácidos Carboxílicos": [
+        { nome: "Derivados de ácidos carboxílicos e reatividade relativa", peso: 1, prioridade: "Alta" },
+        { nome: "Mecanismo de substituição nucleofílica acílica (adição-eliminação)", peso: 1, prioridade: "Alta" },
+        { nome: "Reações de cloretos de acila e anidridos", peso: 1, prioridade: "Alta" },
+        { nome: "Reações de ésteres: hidrólise, transesterificação e amonólise", peso: 1, prioridade: "Alta" },
+        { nome: "Amidas e ácidos: interconversão de derivados", peso: 2, prioridade: "Média" }
+      ],
+      "Unidade III: Aldeídos e Cetonas": [
+        { nome: "Adição nucleofílica a aldeídos e cetonas: mecanismo e reatividade", peso: 1, prioridade: "Alta" },
+        { nome: "Hidratação; hemiacetais e acetais (proteção de carbonilas)", peso: 1, prioridade: "Alta" },
+        { nome: "Adição de Grignard/organolítio e redução (NaBH₄, LiAlH₄)", peso: 1, prioridade: "Alta" },
+        { nome: "Adição-eliminação: iminas e enaminas", peso: 1, prioridade: "Alta" },
+        { nome: "Carboniladas α,β-insaturadas: adição 1,2 vs 1,4 (adição de Michael)", peso: 2, prioridade: "Média" }
+      ],
+      "Unidade IV: Carbono Alfa e Condensações": [
+        { nome: "Acidez dos H α; tautomeria ceto-enólica; enóis e enolatos", peso: 1, prioridade: "Alta" },
+        { nome: "Halogenação no carbono α; alquilação via enolatos (LDA)", peso: 1, prioridade: "Alta" },
+        { nome: "Condensação aldólica: mecanismo e condições", peso: 1, prioridade: "Alta" },
+        { nome: "Condensação aldólica cruzada e intramolecular", peso: 1, prioridade: "Alta" },
+        { nome: "Condensação de Claisen e reações relacionadas", peso: 2, prioridade: "Média" }
+      ]
+    };
+
+    let listaTempSemana = [];
+
+    function getSessoesHistorico() {
+      if (typeof userState !== 'undefined') {
+        if (!userState.sessoesDiagnostico) userState.sessoesDiagnostico = [];
+        return userState.sessoesDiagnostico;
+      }
+      return JSON.parse(localStorage.getItem('organica2_sessoes_diagnostico')) || [];
+    }
+
+    function getDiagnosticoAtual() {
+      if (typeof userState !== 'undefined') {
+        return userState.diagnosticoAtual || null;
+      }
+      return JSON.parse(localStorage.getItem('organica2_diagnostico_atual')) || null;
+    }
+
+    function getCronogramaAtual() {
+      if (typeof userState !== 'undefined') {
+        return userState.cronogramaAtual || null;
+      }
+      return JSON.parse(localStorage.getItem('organica2_cronograma_atual')) || null;
+    }
+
+    async function salvarTudoSincronizado(novasSessoes, novoDiagnostico, novoCronograma) {
+      if (typeof userState !== 'undefined') {
+        userState.sessoesDiagnostico = novasSessoes;
+        userState.diagnosticoAtual = novoDiagnostico;
+        userState.cronogramaAtual = novoCronograma;
+        if (typeof saveDataToCloud === 'function') {
+          await saveDataToCloud();
+        }
+      } else {
+        localStorage.setItem('organica2_sessoes_diagnostico', JSON.stringify(novasSessoes));
+        localStorage.setItem('organica2_diagnostico_atual', JSON.stringify(novoDiagnostico));
+        localStorage.setItem('organica2_cronograma_atual', JSON.stringify(novoCronograma));
+      }
+      renderizarTudo();
+    }
+
+    function adicionarItemTemp() {
+      const unidade = document.getElementById('diag-unidade').value;
+      const assuntoSelect = document.getElementById('diag-assunto').value;
+      const acertos = parseInt(document.getElementById('diag-acertos').value);
+      const total = parseInt(document.getElementById('diag-total').value);
+
+      if (!unidade || !assuntoSelect || isNaN(acertos) || isNaN(total) || total <= 0) {
+        alert("Por favor, preencha a unidade, o assunto e o número de acertos.");
+        return;
+      }
+
+      if (acertos > total) {
+        alert("O número de acertos não pode ser maior que o total de questões!");
+        return;
+      }
+
+      let nomeAssunto = assuntoSelect;
+      let incidencia = "Média";
+      let peso = 2;
+
+      if (assuntoSelect === "OUTRO_TOPICO") {
+        const customNome = document.getElementById('diag-custom-nome').value.trim();
+        const customIncidencia = document.getElementById('diag-custom-incidencia').value;
+
+        if (!customNome) {
+          alert("Por favor, informe o nome do assunto personalizado.");
+          return;
+        }
+
+        nomeAssunto = customNome;
+        incidencia = customIncidencia;
+        peso = incidencia === "Alta" ? 1 : (incidencia === "Média" ? 2 : 3);
+      } else {
+        const banco = MATRIZ_ORGANICA2_BANCO[unidade] || [];
+        const itemBanco = banco.find(t => t.nome === assuntoSelect);
+        if (itemBanco) {
+          incidencia = itemBanco.prioridade;
+          peso = itemBanco.peso;
+        }
+      }
+
+      const percentual = Math.round((acertos / total) * 100);
+
+      listaTempSemana.push({
+        id: Date.now() + Math.random(),
+        unidade: unidade,
+        assunto: nomeAssunto,
+        incidencia: incidencia,
+        peso: peso,
+        acertos: acertos,
+        total: total,
+        percentual: percentual
+      });
+
+      renderizarTabelaTemp();
+      
+      document.getElementById('diag-acertos').value = '';
+      document.getElementById('diag-total').value = '';
+      document.getElementById('diag-custom-nome').value = '';
+      document.getElementById('diag-assunto').value = '';
+      document.getElementById('box-outro-topico').style.display = 'none';
+    }
+
+    function removerItemTemp(id) {
+      listaTempSemana = listaTempSemana.filter(i => i.id !== id);
+      renderizarTabelaTemp();
+    }
+
+    function renderizarTabelaTemp() {
+      const container = document.getElementById('temp-container');
+      const tbody = document.getElementById('temp-tbody');
+
+      if (listaTempSemana.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      tbody.innerHTML = '';
+
+      listaTempSemana.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><b>${item.unidade}</b></td>
+          <td>${item.assunto}</td>
+          <td><span style="font-weight:700;">${item.incidencia}</span></td>
+          <td>${item.acertos} / ${item.total}</td>
+          <td><strong>${item.percentual}%</strong></td>
+          <td><button class="btn-delete-item" onclick="removerItemTemp(${item.id})"><i class="ph ph-trash"></i></button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function processarDiagnosticoEGerarCronograma() {
+      if (listaTempSemana.length === 0) {
+        alert("Adicione pelo menos um assunto à lista antes de gerar o diagnóstico.");
+        return;
+      }
+
+      const dataHoje = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+      
+      const novaSessao = {
+        id: Date.now(),
+        data: dataHoje,
+        itens: [...listaTempSemana]
+      };
+
+      const sessoesAtualizadas = [novaSessao, ...getSessoesHistorico()];
+      const novoDiagnostico = [...listaTempSemana];
+      const novoCronograma = calcularCronogramaComIncidencia(listaTempSemana, sessoesAtualizadas);
+
+      await salvarTudoSincronizado(sessoesAtualizadas, novoDiagnostico, novoCronograma);
+
+      listaTempSemana = [];
+      renderizarTabelaTemp();
+    }
+
+    function renderizarDiagnosticoCards(itensAvaliados) {
+      const containerRes = document.getElementById('diagnostico-resultado-grid');
+      containerRes.innerHTML = '';
+
+      if (!itensAvaliados || itensAvaliados.length === 0) {
+        containerRes.innerHTML = '<p style="color: var(--gray-medium); font-size: 0.9rem;">Nenhum diagnóstico ativo no momento. Cadastre os assuntos acima para gerar.</p>';
+        return;
+      }
+
+      const sessoesHistorico = getSessoesHistorico();
+
+      itensAvaliados.forEach(reg => {
+        let vezesBaixoAnteriormente = 0;
+        sessoesHistorico.slice(1).forEach(sessao => {
+          const itemAnt = sessao.itens.find(i => i.assunto === reg.assunto);
+          if (itemAnt && itemAnt.percentual < 60) vezesBaixoAnteriormente++;
+        });
+
+        const altaImportancia = reg.peso === 1 || reg.incidencia === "Alta";
+
+        let textoAlerta = '';
+        if (reg.percentual < 60) {
+          if (vezesBaixoAnteriormente > 0) {
+            if (altaImportancia) {
+              textoAlerta = `<p style="color: var(--critical-red); font-size: 0.8rem; font-weight: 700; margin-top: 4px;">🔥 ALTA RELEVÂNCIA PERSISTENTE: Mantido como FOCO PRINCIPAL do cronograma!</p>`;
+            } else {
+              textoAlerta = `<p style="color: var(--warning-orange); font-size: 0.8rem; font-weight: 700; margin-top: 4px;">⚠️ Rendimento baixo mantido em SEGUNDO PLANO por ter menor urgência.</p>`;
+            }
+          }
+        }
+
+        let classeStatus = reg.percentual < 60 ? 'critical' : (reg.percentual <= 80 ? 'warning' : 'good');
+        let rotuloStatus = reg.percentual < 60 ? 'Atenção Crítica' : (reg.percentual <= 80 ? 'Ajuste Médio' : 'Dominado');
+
+        const box = document.createElement('div');
+        box.className = `diag-box ${classeStatus}`;
+        box.innerHTML = `
+          <div class="diag-header">
+            <div>
+              <div class="diag-subject">${reg.assunto}</div>
+              <div style="font-size: 0.8rem; color: var(--gray-medium); font-weight: 600;">${reg.unidade} • Relevância: ${reg.incidencia}</div>
+            </div>
+            <span class="diag-tag">${rotuloStatus}</span>
+          </div>
+          <div class="diag-score">
+            Aproveitamento: <b>${reg.percentual}%</b> (${reg.acertos}/${reg.total} acertos)
+          </div>
+          ${textoAlerta}
+        `;
+        containerRes.appendChild(box);
+      });
+    }
+
+    function calcularCronogramaComIncidencia(itensAvaliados, sessoesHistoricoRef) {
+      const unidadesProcessadas = [...new Set(itensAvaliados.map(i => i.unidade))];
+      let tarefasPrincipais = [];
+      let tarefasSegundoPlano = [];
+      const sessoes = sessoesHistoricoRef || getSessoesHistorico();
+
+      unidadesProcessadas.forEach(unidade => {
+        const itensDaUnidade = itensAvaliados.filter(i => i.unidade === unidade);
+        const banco = MATRIZ_ORGANICA2_BANCO[unidade] || [];
+
+        itensDaUnidade.sort((a, b) => a.peso - b.peso);
+
+        itensDaUnidade.forEach(item => {
+          const altaImportancia = item.peso === 1 || item.incidencia === "Alta";
+
+          if (item.percentual < 60) {
+            if (altaImportancia) {
+              tarefasPrincipais.push({
+                tipo: 'foco',
+                titulo: `FOCO PRINCIPAL: ${item.assunto}`,
+                unidade: unidade,
+                detalhe: `Conteúdo de ALTA RELEVÂNCIA (${item.percentual}% de acertos). Revisão teórica + resolução de mecanismos/exercícios.`
+              });
+            } else {
+              tarefasSegundoPlano.push({
+                tipo: 'secundario',
+                titulo: `SEGUNDO PLANO (${item.incidencia.toUpperCase()} RELEVÂNCIA): ${item.assunto}`,
+                unidade: unidade,
+                detalhe: `Rendimento baixo (${item.percentual}%). Estudar após finalizar tópicos prioritários.`
+              });
+            }
+          } else if (item.percentual <= 80) {
+            tarefasSegundoPlano.push({
+              tipo: 'secundario',
+              titulo: `SEGUNDO PLANO (AJUSTE): ${item.assunto}`,
+              unidade: unidade,
+              detalhe: `Revisar erros e particularidades de mecanismos se houver tempo disponível.`
+            });
+          }
+        });
+
+        const jaTemFoco = tarefasPrincipais.some(t => t.unidade === unidade);
+        if (!jaTemFoco) {
+          const todosAvaliadosNomes = sessoes.flatMap(s => s.itens).map(i => i.assunto);
+          const proximoInedito = banco.find(t => !todosAvaliadosNomes.includes(t.nome)) || banco[0];
+
+          if (proximoInedito) {
+            tarefasPrincipais.push({
+              tipo: 'foco',
+              titulo: `AVANÇO NA MATRIZ: ${proximoInedito.nome}`,
+              unidade: unidade,
+              detalhe: `Próximo tópico prioritário do programa de estudo.`
+            });
+          }
+        }
+      });
+
+      const dias = [
+        { nome: "Segunda-feira", tarefas: [] },
+        { nome: "Terça-feira", tarefas: [] },
+        { nome: "Quarta-feira", tarefas: [] },
+        { nome: "Quinta-feira", tarefas: [] },
+        { nome: "Sexta-feira", tarefas: [] },
+        { nome: "Sábado", tarefas: [] },
+        { nome: "Domingo", tarefas: [{
+          tipo: 'simulado',
+          titulo: 'ESTUDO DIRIGIDO / REVISÃO GERAL',
+          unidade: 'Geral',
+          detalhe: 'Realizar lista de exercícios integrada para avaliar retenção.'
+        }] }
+      ];
+
+      tarefasPrincipais.forEach((tarefa, idx) => {
+        dias[idx % 6].tarefas.push(tarefa);
+      });
+
+      tarefasSegundoPlano.forEach((tarefa, idx) => {
+        dias[idx % 6].tarefas.push(tarefa);
+      });
+
+      return dias;
+    }
+
+    function renderizarCronograma(dias) {
+      const containerCronograma = document.getElementById('cronograma-semanal-container');
+      containerCronograma.innerHTML = '';
+
+      if (!dias || dias.length === 0) {
+        containerCronograma.innerHTML = '<p style="color: var(--gray-medium); font-size: 0.9rem;">Nenhum cronograma gerado no momento.</p>';
+        return;
+      }
+
+      dias.forEach(d => {
+        const dayCard = document.createElement('div');
+        dayCard.className = 'day-card';
+
+        let htmlTarefas = '';
+        if (d.tarefas.length === 0) {
+          htmlTarefas = `<p style="font-size: 0.8rem; color: var(--gray-medium);">Dia de descanso ou leituras complementares.</p>`;
+        } else {
+          htmlTarefas = d.tarefas.map(t => {
+            let badgeClass = 'badge-foco';
+            let badgeTexto = 'FOCO PRINCIPAL';
+            let classeCardExtra = '';
+            
+            if (t.tipo === 'secundario') { 
+              badgeClass = 'badge-secundario'; 
+              badgeTexto = 'SEGUNDO PLANO'; 
+              classeCardExtra = 'segundo-plano';
+            }
+            if (t.tipo === 'simulado') { badgeClass = 'badge-simulado'; badgeTexto = 'AVALIAÇÃO'; }
+
+            return `
+              <div class="task-item ${classeCardExtra}">
+                <span class="task-badge ${badgeClass}">${badgeTexto}</span>
+                <strong>${t.titulo}</strong>
+                <span style="color: var(--gray-medium); font-size: 0.78rem;">${t.unidade}</span>
+                <p style="margin-top: 2px;">${t.detalhe}</p>
+              </div>
+            `;
+          }).join('');
+        }
+
+        dayCard.innerHTML = `
+          <div class="day-header"><i class="ph ph-calendar-check"></i> ${d.nome}</div>
+          ${htmlTarefas}
+        `;
+        containerCronograma.appendChild(dayCard);
+      });
+    }
+
+    function renderizarHistoricoAgrupado() {
+      const container = document.getElementById('historico-secoes-container');
+      container.innerHTML = '';
+
+      const sessoesHistorico = getSessoesHistorico();
+
+      if (sessoesHistorico.length === 0) {
+        container.innerHTML = `<p style="color: var(--gray-medium); font-size: 0.9rem; text-align: center;">Nenhuma sessão de diagnóstico gravada.</p>`;
+        return;
+      }
+
+      sessoesHistorico.forEach((sessao, index) => {
+        const cardSessao = document.createElement('div');
+        cardSessao.className = 'history-session-card';
+
+        const tabelaRows = sessao.itens.map(item => `
+          <tr>
+            <td><b>${item.unidade}</b></td>
+            <td>${item.assunto}</td>
+            <td>${item.incidencia || 'Média'}</td>
+            <td><strong>${item.percentual}%</strong> (${item.acertos}/${item.total})</td>
+            <td><span style="font-weight:700; color:${item.percentual < 60 ? 'var(--critical-red)' : 'var(--success-green)'};">${item.percentual < 60 ? 'Crítico' : (item.percentual <= 80 ? 'Médio' : 'Dominado')}</span></td>
+            <td>
+              <button class="btn-delete-item" onclick="apagarItemDaSessao(${sessao.id}, ${item.id})" title="Apagar este assunto">
+                <i class="ph ph-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `).join('');
+
+        cardSessao.innerHTML = `
+          <div class="history-session-header">
+            <div class="history-session-title">
+              <i class="ph ph-folder-open"></i> Sessão de Diagnóstico #${sessoesHistorico.length - index} — ${sessao.data}
+            </div>
+            <button class="btn btn-danger" onclick="apagarSessao(${sessao.id})">
+              <i class="ph ph-trash"></i> Excluir Sessão
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="temp-table">
+              <thead>
+                <tr>
+                  <th>Unidade</th>
+                  <th>Assunto</th>
+                  <th>Relevância</th>
+                  <th>Aproveitamento</th>
+                  <th>Status</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tabelaRows}
+              </tbody>
+            </table>
+          </div>
+        `;
+        container.appendChild(cardSessao);
+      });
+    }
+
+    async function apagarSessao(sessaoId) {
+      if (confirm("Deseja apagar esta sessão inteira do histórico?")) {
+        const sessoesFiltradas = getSessoesHistorico().filter(s => s.id !== sessaoId);
+        await salvarTudoSincronizado(sessoesFiltradas, getDiagnosticoAtual(), getCronogramaAtual());
+      }
+    }
+
+    async function apagarItemDaSessao(sessaoId, itemId) {
+      if (confirm("Deseja remover este assunto da sessão?")) {
+        let sessoes = getSessoesHistorico();
+        const sessao = sessoes.find(s => s.id === sessaoId);
+        if (sessao) {
+          sessao.itens = sessao.itens.filter(i => i.id !== itemId);
+          if (sessao.itens.length === 0) {
+            sessoes = sessoes.filter(s => s.id !== sessaoId);
+          }
+        }
+        await salvarTudoSincronizado(sessoes, getDiagnosticoAtual(), getCronogramaAtual());
+      }
+    }
+
+    async function apagarTodoHistorico() {
+      if (confirm("Tem certeza que deseja apagar TODO o histórico? Esta ação limpa também o diagnóstico atual.")) {
+        await salvarTudoSincronizado([], null, null);
+      }
+    }
+
+    function renderizarTudo() {
+      renderizarDiagnosticoCards(getDiagnosticoAtual());
+      renderizarCronograma(getCronogramaAtual());
+      renderizarHistoricoAgrupado();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const selectUnidade = document.getElementById('diag-unidade');
+      const selectAssunto = document.getElementById('diag-assunto');
+      const boxOutro = document.getElementById('box-outro-topico');
+
+      if (selectUnidade && selectAssunto) {
+        selectUnidade.addEventListener('change', (e) => {
+          const unidade = e.target.value;
+          boxOutro.style.display = 'none';
+
+          if (!unidade || !MATRIZ_ORGANICA2_BANCO[unidade]) {
+            selectAssunto.disabled = true;
+            selectAssunto.innerHTML = '<option value="">Primeiro selecione a unidade...</option>';
+            return;
+          }
+
+          selectAssunto.disabled = false;
+          selectAssunto.innerHTML = '<option value="">Selecione o assunto...</option>';
+          
+          MATRIZ_ORGANICA2_BANCO[unidade].forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t.nome;
+            opt.textContent = `${t.nome} (${t.prioridade})`;
+            selectAssunto.appendChild(opt);
+          });
+
+          const optOutro = document.createElement('option');
+          optOutro.value = "OUTRO_TOPICO";
+          optOutro.textContent = "➕ Outro assunto...";
+          selectAssunto.appendChild(optOutro);
+        });
+
+        selectAssunto.addEventListener('change', (e) => {
+          if (e.target.value === "OUTRO_TOPICO") {
+            boxOutro.style.display = 'block';
+          } else {
+            boxOutro.style.display = 'none';
+          }
+        });
+      }
+
+      const btnAdd = document.getElementById('btn-adicionar-temp');
+      if (btnAdd) btnAdd.addEventListener('click', adicionarItemTemp);
+
+      const btnGerar = document.getElementById('btn-gerar-diagnostico');
+      if (btnGerar) btnGerar.addEventListener('click', processarDiagnosticoEGerarCronograma);
+
+      const btnLimpar = document.getElementById('btn-limpar-historico');
+      if (btnLimpar) btnLimpar.addEventListener('click', apagarTodoHistorico);
+
+      const temAtrasado = localStorage.getItem('organica2_revisao_atrasada') === 'true';
+      const alarmIcon = document.getElementById('revisao-alarm-icon');
+      if (alarmIcon) alarmIcon.style.display = temAtrasado ? 'inline-block' : 'none';
+
+      const originalRefresh = window.refreshAllUI;
+      window.refreshAllUI = function() {
+        if (typeof originalRefresh === 'function') originalRefresh();
+        renderizarTudo();
+      };
+
+      renderizarTudo();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revisão Espaçada - Química Orgânica II - UFCG</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* VARIÁVEIS E CONFIGURAÇÕES GLOBAIS EM TONS DE AZUL E CORES NEUTRAS */
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --radius: 18px;
+      --success-green: #059669;
+      --success-green-bg: #ECFDF5;
+      
+      /* CORES NEUTRAS EM SUBSTITUIÇÃO AO ROSA */
+      --slate-neutral: #475569;
+      --slate-neutral-hover: #334155;
+      --slate-neutral-light: #F1F5F9;
+      --slate-neutral-border: #CBD5E1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* BOTÃO FLUTUANTE DE MENU */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    /* OVERLAY DO MENU */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* SIDEBAR LATERAL FLUTUANTE */
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i {
+      font-size: 1.8rem;
+      color: var(--blue-primary);
+    }
+
+    .logo-container h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo-container h1 span {
+      color: var(--blue-accent);
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover {
+      color: var(--blue-primary);
+    }
+
+    /* NAVIGATION LINKS */
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .alarm-badge {
+      display: none;
+      margin-left: auto;
+      color: var(--slate-neutral);
+      font-size: 1.2rem;
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    .nav-link.active .alarm-badge {
+      color: var(--white);
+    }
+
+    @keyframes pulseAlarm {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 5rem;
+      transition: padding 0.3s ease;
+    }
+
+    @media(max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 2rem 1.2rem;
+      }
+    }
+
+    /* HEADER BANNER */
+    .header-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      padding: 2.2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-banner p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 1.8rem;
+      transition: transform 0.2s ease;
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .card-title i {
+      color: var(--blue-primary);
+      background: var(--blue-light);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--gray-medium);
+      line-height: 1.5;
+      margin-top: -0.4rem;
+    }
+
+    /* FORMULÁRIO */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .form-control {
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--gray-light);
+      background: var(--blue-soft);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--blue-primary);
+      background: var(--white);
+    }
+
+    .score-inputs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .score-inputs input {
+      text-align: center;
+    }
+
+    .score-separator {
+      font-weight: 800;
+      color: var(--gray-medium);
+      font-size: 1.2rem;
+    }
+
+    /* BOTÕES */
+    .btn {
+      padding: 0.85rem 1.4rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-blue {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      width: 100%;
+    }
+
+    .btn-blue:hover {
+      background: var(--blue-hover);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-outline-danger {
+      background: transparent;
+      border: 1px solid var(--slate-neutral-border);
+      color: var(--slate-neutral);
+      padding: 0.5rem 1rem;
+      font-size: 0.82rem;
+      border-radius: 10px;
+      width: auto;
+    }
+
+    .btn-outline-danger:hover {
+      background: var(--slate-neutral);
+      color: var(--white);
+      border-color: var(--slate-neutral);
+    }
+
+    .btn-icon {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.4rem;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-delete {
+      color: var(--slate-neutral);
+    }
+
+    .btn-delete:hover {
+      background: var(--slate-neutral-light);
+      color: var(--slate-neutral-hover);
+    }
+
+    /* LISTAGEM DE SIMULADOS / REVISÕES */
+    .simulado-card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      box-shadow: 0 4px 15px rgba(30, 58, 138, 0.03);
+      margin-bottom: 1.2rem;
+    }
+
+    .simulado-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px dashed var(--gray-light);
+      padding-bottom: 0.8rem;
+      gap: 0.8rem;
+    }
+
+    .simulado-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--blue-navy);
+      word-break: break-word;
+    }
+
+    .simulado-badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.3rem;
+      flex-wrap: wrap;
+    }
+
+    .badge-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: var(--blue-hover);
+      border: 1px solid var(--blue-light);
+    }
+
+    .badge-tag.area {
+      background: var(--blue-light);
+      color: var(--blue-navy);
+    }
+
+    .simulado-meta {
+      font-size: 0.82rem;
+      color: var(--gray-medium);
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .prazos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .prazo-box {
+      background: var(--blue-soft);
+      border: 1px solid var(--blue-light);
+      border-radius: 12px;
+      padding: 0.6rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .prazo-box.hoje {
+      border-color: var(--slate-neutral-border);
+      background: var(--slate-neutral-light);
+    }
+
+    .prazo-box.concluido {
+      border-color: var(--success-green);
+      background: var(--success-green-bg);
+    }
+
+    .prazo-box.bloqueado {
+      opacity: 0.65;
+    }
+
+    .prazo-dias {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--gray-medium);
+      text-transform: uppercase;
+    }
+
+    .prazo-box.hoje .prazo-dias { color: var(--slate-neutral-hover); }
+    .prazo-box.concluido .prazo-dias { color: var(--success-green); }
+
+    .prazo-data {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .btn-check-prazo {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0.2rem;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .btn-check-prazo:disabled {
+      cursor: not-allowed;
+      background: var(--gray-light);
+      color: var(--gray-medium);
+      border: none;
+    }
+
+    .prazo-box.hoje .btn-check-prazo:not(:disabled) {
+      background: var(--slate-neutral);
+      color: var(--white);
+      border: none;
+    }
+
+    .prazo-box.hoje .btn-check-prazo:not(:disabled):hover {
+      background: var(--slate-neutral-hover);
+    }
+
+    .prazo-box.concluido .btn-check-prazo {
+      background: var(--success-green);
+      color: var(--white);
+      border: none;
+    }
+
+    .historico-pontuacoes {
+      background: var(--blue-soft);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      font-size: 0.82rem;
+      border: 1px solid var(--blue-light);
+    }
+
+    .historico-pontuacoes-title {
+      font-weight: 700;
+      color: var(--blue-navy);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .historico-pontuacoes-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .pontuacao-item-tag {
+      background: var(--white);
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid var(--gray-light);
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .empty-revisoes {
+      text-align: center;
+      color: var(--gray-medium);
+      font-size: 0.9rem;
+      padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .prazos-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card-header-flex {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn-outline-danger {
+        width: 100%;
+      }
+
+      .prazos-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <!-- OVERLAY DE SOMBREAMENTO -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL FLUTUANTE -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <!-- ABAS LATERAIS DO PROJETO -->
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link">
+        <i class="ph ph-house-line"></i> Início
+      </a>
+      <a href="matriz.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Matriz
+      </a>
+      <a href="checklist.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Checklist
+      </a>
+      <a href="cronometro.html" class="nav-link">
+        <i class="ph ph-timer"></i> Cronômetro/Pomodoro
+      </a>
+      <a href="cronograma.html" class="nav-link">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link active">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+        <i class="ph ph-bell-ringing alarm-badge" id="revisao-alarm-icon" title="Existem revisões atrasadas!"></i>
+      </a>
+      <a href="descompressao.html" class="nav-link">
+        <i class="ph ph-heartbeat"></i> Descompressão
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-container">
+    
+    <!-- BANNER DE CABEÇALHO -->
+    <div class="header-banner">
+      <div>
+        <h2>Revisão Espaçada & Cards</h2>
+        <p>Cadastre os conteúdos estudados para calcular automaticamente seu cronograma de revisões em 1, 3, 7, 15, 30, 60 e 75 dias.</p>
+      </div>
+    </div>
+
+    <!-- CADASTRO DE NOVO CONTEÚDO PARA REVISÃO -->
+    <div class="card">
+      <div class="card-title">
+        <i class="ph ph-plus-circle"></i> Registrar Conteúdo Estudado
+      </div>
+      <p class="card-subtitle">Informe os dados e a unidade programática para gerar seu plano sistemático de revisões.</p>
+
+      <form id="form-simulado" class="form-grid">
+        <div class="form-group full-width">
+          <label for="nome-simulado">Tópico / Conteúdo Estudado</label>
+          <input type="text" id="nome-simulado" class="form-control" placeholder="Ex: Substituição Eletrofílica Aromática" required>
+        </div>
+
+        <div class="form-group">
+          <label for="area-conhecimento">Unidade Programática</label>
+          <select id="area-conhecimento" class="form-control" required>
+            <option value="">Selecione a unidade...</option>
+            <option value="Unidade I">Unidade I - Aromaticidade e Aromáticos</option>
+            <option value="Unidade II">Unidade II - Derivados de Ácidos Carboxílicos</option>
+            <option value="Unidade III">Unidade III - Aldeídos e Cetonas</option>
+            <option value="Unidade IV">Unidade IV - Carbono Alfa e Condensações</option>
+            <option value="Geral">Geral / Revisão Integrada</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="topico-simulado">Capítulo / Categoria</label>
+          <select id="topico-simulado" class="form-control" required disabled>
+            <option value="">Primeiro selecione a unidade...</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data-simulado">Data de Estudo / Realização</label>
+          <input type="date" id="data-simulado" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Acertos nos Exercícios (X / Y)</label>
+          <div class="score-inputs">
+            <input type="number" id="acertos-simulado" class="form-control" placeholder="Acertos (X)" min="0">
+            <span class="score-separator">/</span>
+            <input type="number" id="total-simulado" class="form-control" placeholder="Total (Y)" min="1">
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-top: 0.5rem;">
+          <button type="submit" class="btn btn-blue">
+            <i class="ph ph-calendar-plus"></i> Gerar Cronograma de Revisão
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- LISTA DE REVISÕES PENDENTES E FUTURAS -->
+    <div class="card">
+      <div class="card-header-flex">
+        <div class="card-title">
+          <i class="ph ph-clock"></i> Meus Cronogramas de Revisão
+        </div>
+        <button class="btn btn-outline-danger" id="btn-limpar-revisoes">
+          <i class="ph ph-trash"></i> Limpar Tudo
+        </button>
+      </div>
+      <p class="card-subtitle">Acompanhe os prazos de revisão programados e registre o desempenho obtido a cada ciclo.</p>
+
+      <div id="revisoes-container">
+        <!-- Cronogramas serão gerados dinamicamente via JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- CARREGA O SCRIPT GLOBAL -->
+  <script src="app.js"></script>
+
+  <!-- LÓGICA DA INTERFACE, MENU E REVISÃO ESPAÇADA -->
+  <script>
+    // 1. MAPEAMENTO DE TÓPICOS/CAPÍTULOS POR UNIDADE DE QUÍMICA ORGÂNICA II
+    const TOPICOS_POR_AREA = {
+      "Unidade I": ["Cap. 15 - Aromaticidade", "Cap. 15 - Reações de Aromáticos", "Cap. 16 - Benzenos Substituídos", "Mecanismos", "Síntese Orgânica"],
+      "Unidade II": ["Cap. 17 - Derivados de Ácidos", "Substituição Nucleofílica Acílica", "Cloretos e Anidridos", "Ésteres e Amidas", "Exercícios e Mecanismos"],
+      "Unidade III": ["Cap. 18 - Aldeídos e Cetonas", "Adição Nucleofílica", "Acetais e Proteção", "Reagentes de Grignard / Redução", "Adição de Michael"],
+      "Unidade IV": ["Cap. 19 - Carbono Alfa", "Enóis e Enolatos", "Condensação Aldólica", "Condensação de Claisen", "Estudo Dirigido"],
+      "Geral": ["Revisão Geral Prova", "Resolução de Lista", "Exercícios de Fixação", "Outro"]
+    };
+
+    const INTERVALOS_REVISAO = [1, 3, 7, 15, 30, 60, 75];
+
+    // 2. FUNÇÕES DE ARMAZENAMENTO E DADOS ROBUSTAS
+    function getSimuladosRevisao() {
+      if (typeof window.carregarHistoricoRevisaoGlobal === 'function') {
+        return window.carregarHistoricoRevisaoGlobal();
+      }
+      try {
+        const data = localStorage.getItem('organica2_simulados_revisao');
+        if (data) {
+          const parsed = JSON.parse(data);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      } catch (e) {
+        console.error("Erro ao ler simulados:", e);
+      }
+      return [];
+    }
+
+    async function salvarDados(novosSimulados) {
+      if (typeof window.salvarHistoricoRevisaoGlobal === 'function') {
+        window.salvarHistoricoRevisaoGlobal(novosSimulados);
+      } else {
+        localStorage.setItem('organica2_simulados_revisao', JSON.stringify(novosSimulados));
+      }
+      verificarStatusAlertasGlobais();
+      renderizarRevisoes();
+    }
+
+    function formatarDataBR(dataIso) {
+      if (!dataIso) return '--';
+      const partes = dataIso.split('-');
+      if (partes.length !== 3) return dataIso;
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function calcularDataFutura(dataInicialStr, diasAdicionais) {
+      const data = new Date(dataInicialStr + 'T00:00:00');
+      data.setDate(data.getDate() + diasAdicionais);
+      const ano = data.getFullYear();
+      const mes = String(data.getMonth() + 1).padStart(2, '0');
+      const dia = String(data.getDate()).padStart(2, '0');
+      return `${ano}-${mes}-${dia}`;
+    }
+
+    function verificarStatusAlertasGlobais() {
+      const simulados = getSimuladosRevisao();
+      const hojeIso = new Date().toISOString().split('T')[0];
+      let temAtrasado = false;
+
+      simulados.forEach(sim => {
+        if (sim.prazos) {
+          Object.keys(sim.prazos).forEach(chave => {
+            const item = sim.prazos[chave];
+            if (item && !item.concluido && item.dataPrevista < hojeIso) {
+              temAtrasado = true;
+            }
+          });
+        }
+      });
+
+      localStorage.setItem('organica2_revisao_atrasada', temAtrasado ? 'true' : 'false');
+      
+      const alarmIcon = document.getElementById('revisao-alarm-icon');
+      if (alarmIcon) {
+        alarmIcon.style.display = temAtrasado ? 'inline-block' : 'none';
+      }
+    }
+
+    // 3. REGISTRO E INTERAÇÕES
+    async function registrarSimulado(e) {
+      e.preventDefault();
+      const nome = document.getElementById('nome-simulado').value.trim();
+      const area = document.getElementById('area-conhecimento').value;
+      const topico = document.getElementById('topico-simulado').value;
+      const data = document.getElementById('data-simulado').value;
+      const acertos = document.getElementById('acertos-simulado').value;
+      const total = document.getElementById('total-simulado').value;
+
+      if (!nome || !area || !topico || !data) {
+        alert("Por favor, preencha todos os campos obrigatórios!");
+        return;
+      }
+
+      let placarOriginal = null;
+      if (acertos !== "" && total !== "") {
+        placarOriginal = `${acertos} / ${total}`;
+      }
+
+      const prazosCalculados = {};
+      INTERVALOS_REVISAO.forEach(dias => {
+        prazosCalculados[`dias_${dias}`] = {
+          dias: dias,
+          dataPrevista: calcularDataFutura(data, dias),
+          concluido: false,
+          pontuacao: null
+        };
+      });
+
+      const novoSimulado = {
+        id: Date.now(),
+        nome: nome,
+        area: area,
+        topico: topico,
+        dataRealizacao: data,
+        placarOriginal: placarOriginal,
+        prazos: prazosCalculados
+      };
+
+      const listaAtualizada = [novoSimulado, ...getSimuladosRevisao()];
+      await salvarDados(listaAtualizada);
+
+      document.getElementById('form-simulado').reset();
+      document.getElementById('topico-simulado').disabled = true;
+      document.getElementById('topico-simulado').innerHTML = '<option value="">Primeiro selecione a unidade...</option>';
+      document.getElementById('data-simulado').valueAsDate = new Date();
+    }
+
+    // Funções expostas globalmente para garantir acesso por onclick no HTML dinâmico
+    window.concluirEAnotarPontuacao = async function(idSimulado, chavePrazo) {
+      const acertos = prompt("Quantas questões você acertou nesta revisão?");
+      if (acertos === null) return;
+
+      const total = prompt("Qual foi o total de questões dessa revisão?");
+      if (total === null) return;
+
+      const notaFinal = (acertos !== "" && total !== "") ? `${acertos} / ${total}` : 'Concluído';
+
+      const listaAtualizada = getSimuladosRevisao().map(sim => {
+        if (sim.id === idSimulado) {
+          if (sim.prazos && sim.prazos[chavePrazo]) {
+            sim.prazos[chavePrazo].concluido = true;
+            sim.prazos[chavePrazo].pontuacao = notaFinal;
+          }
+        }
+        return sim;
+      });
+
+      await salvarDados(listaAtualizada);
+    }
+
+    window.excluirSimulado = async function(idSimulado) {
+      if (confirm("Tem certeza que deseja excluir este cronograma de revisão?")) {
+        const listaAtualizada = getSimuladosRevisao().filter(s => s.id !== idSimulado);
+        await salvarDados(listaAtualizada);
+      }
+    }
+
+    // 4. RENDERIZAÇÃO NA TELA
+    function renderizarRevisoes() {
+      const container = document.getElementById('revisoes-container');
+      if (!container) return;
+
+      const simulados = getSimuladosRevisao();
+
+      if (!simulados || simulados.length === 0) {
+        container.innerHTML = `<div class="empty-revisoes">Nenhum conteúdo cadastrado para revisão. Preencha o formulário acima para iniciar seu acompanhamento!</div>`;
+        return;
+      }
+
+      const hojeIso = new Date().toISOString().split('T')[0];
+      container.innerHTML = '';
+
+      simulados.forEach(sim => {
+        const div = document.createElement('div');
+        div.className = 'simulado-card';
+
+        let prazosHtml = '';
+        let historicoPontuacoesHtml = '';
+
+        if (sim.prazos) {
+          INTERVALOS_REVISAO.forEach(dias => {
+            const chave = `dias_${dias}`;
+            const itemPrazo = sim.prazos[chave];
+            if (!itemPrazo) return;
+
+            const eFuturo = itemPrazo.dataPrevista > hojeIso;
+            const eHojeOuAtrasado = itemPrazo.dataPrevista <= hojeIso && !itemPrazo.concluido;
+
+            let classeBox = 'prazo-box';
+            if (itemPrazo.concluido) {
+              classeBox += ' concluido';
+              if (itemPrazo.pontuacao) {
+                historicoPontuacoesHtml += `<span class="pontuacao-item-tag"><b>Dia ${String(dias).padStart(2, '0')}:</b> ${itemPrazo.pontuacao}</span>`;
+              }
+            } else if (eHojeOuAtrasado) {
+              classeBox += ' hoje';
+            } else if (eFuturo) {
+              classeBox += ' bloqueado';
+            }
+
+            prazosHtml += `
+              <div class="${classeBox}">
+                <div class="prazo-dias">${dias} D${dias > 1 ? 'IAS' : 'IA'}</div>
+                <div class="prazo-data">${formatarDataBR(itemPrazo.dataPrevista)}</div>
+                <button 
+                  class="btn-check-prazo" 
+                  ${eFuturo && !itemPrazo.concluido ? 'disabled' : ''} 
+                  onclick="concluirEAnotarPontuacao(${sim.id}, '${chave}')">
+                  ${itemPrazo.concluido ? '<i class="ph ph-check"></i> Feito' : (eFuturo ? 'Aguardar' : 'Revisar')}
+                </button>
+              </div>
+            `;
+          });
+        }
+
+        div.innerHTML = `
+          <div class="simulado-header">
+            <div>
+              <div class="simulado-title">${sim.nome}</div>
+              <div class="simulado-badges">
+                <span class="badge-tag area">${sim.area}</span>
+                <span class="badge-tag">${sim.topico}</span>
+              </div>
+              <div class="simulado-meta">
+                <span><i class="ph ph-calendar-blank"></i> Estudado em: ${formatarDataBR(sim.dataRealizacao)}</span>
+                ${sim.placarOriginal ? `<span><i class="ph ph-target"></i> Treino Inicial: <b>${sim.placarOriginal}</b></span>` : ''}
+              </div>
+            </div>
+            <button class="btn-icon btn-delete" onclick="excluirSimulado(${sim.id})" title="Excluir Cronograma">
+              <i class="ph ph-trash"></i>
+            </button>
+          </div>
+
+          <div class="prazos-grid">
+            ${prazosHtml}
+          </div>
+
+          ${historicoPontuacoesHtml ? `
+            <div class="historico-pontuacoes">
+              <div class="historico-pontuacoes-title"><i class="ph ph-chart-line-up"></i> Histórico de Desempenho nas Revisões:</div>
+              <div class="historico-pontuacoes-list">${historicoPontuacoesHtml}</div>
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    // 5. INICIALIZAÇÃO E EVENTOS
+    document.addEventListener('DOMContentLoaded', () => {
+      // Data Padrão Hoje
+      const inputData = document.getElementById('data-simulado');
+      if (inputData && !inputData.value) inputData.valueAsDate = new Date();
+
+      // Mapeamento dinâmico do select de Unidades x Tópicos
+      const areaSelect = document.getElementById('area-conhecimento');
+      const topicoSelect = document.getElementById('topico-simulado');
+
+      if (areaSelect && topicoSelect) {
+        areaSelect.addEventListener('change', (e) => {
+          const areaSelecionada = e.target.value;
+          if (!areaSelecionada || !TOPICOS_POR_AREA[areaSelecionada]) {
+            topicoSelect.disabled = true;
+            topicoSelect.innerHTML = '<option value="">Primeiro selecione a unidade...</option>';
+            return;
+          }
+
+          topicoSelect.disabled = false;
+          topicoSelect.innerHTML = '<option value="">Selecione o capítulo / tópico...</option>';
+          TOPICOS_POR_AREA[areaSelecionada].forEach(topico => {
+            const opt = document.createElement('option');
+            opt.value = topico;
+            opt.textContent = topico;
+            topicoSelect.appendChild(opt);
+          });
+        });
+      }
+
+      // Eventos do Formulário e Limpeza
+      const form = document.getElementById('form-simulado');
+      if (form) form.addEventListener('submit', registrarSimulado);
+
+      const btnLimpar = document.getElementById('btn-limpar-revisoes');
+      if (btnLimpar) {
+        btnLimpar.addEventListener('click', async () => {
+          if (confirm("Deseja apagar todo o seu histórico de revisões?")) {
+            await salvarDados([]);
+          }
+        });
+      }
+
+      verificarStatusAlertasGlobais();
+      renderizarRevisoes();
+    });
+  </script>
+</body>
+</html>

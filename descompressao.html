@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espaço de Descompressão - Química Orgânica II - UFCG</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* VARIÁVEIS E CONFIGURAÇÕES GLOBAIS - PALETA AZUL DA MATRIZ UFCG */
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --radius: 18px;
+      --border-color: #CBD5E1;
+      --alert-pink: #EF476F;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* BOTÃO FLUTUANTE DE MENU */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    /* OVERLAY PARA O MENU */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* SIDEBAR LATERAL FLUTUANTE */
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i {
+      font-size: 1.8rem;
+      color: var(--blue-primary);
+    }
+
+    .logo-container h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo-container h1 span {
+      color: var(--blue-accent);
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover {
+      color: var(--blue-primary);
+    }
+
+    /* ABAS DE NAVEGAÇÃO */
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      flex: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 2rem 5.5rem;
+      transition: padding 0.3s ease;
+    }
+
+    @media(max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 2rem 1.2rem;
+      }
+    }
+
+    /* BANNER TOPO */
+    .top-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      padding: 2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .top-banner h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.3rem;
+      letter-spacing: -0.5px;
+    }
+
+    .top-banner p {
+      font-size: 0.95rem;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    /* GRID LADO A LADO */
+    .decomp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      align-items: stretch;
+    }
+
+    @media(max-width: 1024px) {
+      .decomp-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: var(--radius);
+      padding: 2.2rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.4rem;
+      color: var(--blue-navy);
+    }
+
+    .card-title i {
+      color: var(--blue-primary);
+      background: var(--blue-light);
+      padding: 8px;
+      border-radius: 10px;
+    }
+
+    .card-subtitle {
+      font-size: 0.88rem;
+      color: var(--gray-medium);
+      margin-bottom: 1.8rem;
+      line-height: 1.5;
+    }
+
+    /* RESPIRAÇÃO GUIADA */
+    .breathing-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0;
+      flex: 1;
+    }
+
+    .breathing-circle-wrapper {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .breathing-circle {
+      width: 140px;
+      height: 140px;
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-soft));
+      border: 3px solid var(--blue-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--blue-navy);
+      box-shadow: 0 0 25px rgba(37, 99, 235, 0.15);
+      transition: transform 4s ease-in-out, background-color 4s ease-in-out, border-color 4s ease-in-out;
+    }
+
+    .breathing-circle.inhale {
+      transform: scale(1.35);
+      background: linear-gradient(135deg, #BAE6FD, var(--blue-light));
+      border-color: var(--blue-primary);
+    }
+
+    .breathing-circle.exhale {
+      transform: scale(1);
+      background: linear-gradient(135deg, var(--blue-light), var(--blue-soft));
+      border-color: var(--blue-accent);
+    }
+
+    .breathing-controls {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 0.8rem 1.4rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:hover { filter: brightness(0.96); transform: translateY(-1px); }
+
+    .btn-blue { background-color: var(--blue-primary); color: var(--white); }
+    .btn-outline { background-color: var(--white); border: 2px solid var(--gray-light); color: var(--text-dark); }
+
+    /* ESCRITA E JOGAR FORA */
+    .shredder-box {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .shredder-box textarea {
+      width: 100%;
+      height: 140px;
+      padding: 1.2rem;
+      border-radius: 14px;
+      border: 2px solid var(--gray-light);
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      resize: vertical;
+      background: var(--blue-soft);
+      margin-bottom: 1rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .shredder-box textarea:focus {
+      border-color: var(--blue-primary);
+      background: var(--white);
+      box-shadow: 0 0 0 4px var(--blue-light);
+    }
+
+    .shredder-footer-area {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .shredder-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn-shred {
+      background: linear-gradient(135deg, var(--blue-primary), var(--blue-navy));
+      color: var(--white);
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .desabafo-status-msg {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--blue-primary);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      min-height: 1.4rem;
+    }
+
+    .desabafo-status-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* SONS RELAXANTES */
+    .sounds-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media(max-width: 600px) {
+      .sounds-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sound-card {
+      background: var(--blue-soft);
+      border: 2px solid var(--gray-light);
+      border-radius: 14px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sound-card:hover {
+      border-color: var(--blue-accent);
+      background: var(--blue-light);
+      transform: translateY(-2px);
+    }
+
+    .sound-card.active {
+      border-color: var(--blue-primary);
+      background: var(--blue-light);
+    }
+
+    .sound-card i {
+      font-size: 1.8rem;
+      color: var(--blue-navy);
+    }
+
+    .sound-card.active i {
+      color: var(--blue-primary);
+    }
+
+    .sound-card span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    /* ANIMAÇÃO DE DESTRUIÇÃO DE PENSAMENTOS */
+    @keyframes shredEffect {
+      0% { transform: scale(1) rotate(0deg); opacity: 1; filter: blur(0px); }
+      50% { transform: scale(0.6) rotate(4deg) translateY(15px); opacity: 0.5; filter: blur(2px); }
+      100% { transform: scale(0.1) rotate(-8deg) translateY(60px); opacity: 0; filter: blur(6px); }
+    }
+
+    .shredding {
+      animation: shredEffect 0.7s forwards ease-in;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <!-- OVERLAY MASCARA DE SOMBREAMENTO -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL FLUTUANTE -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <!-- ABAS LATERAIS DA MATRIZ UFCG -->
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link">
+        <i class="ph ph-house-line"></i> Início
+      </a>
+      <a href="matriz.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Matriz
+      </a>
+      <a href="checklist.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Checklist
+      </a>
+      <a href="cronometro.html" class="nav-link">
+        <i class="ph ph-timer"></i> Cronômetro/Pomodoro
+      </a>
+      <a href="cronograma.html" class="nav-link">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+      </a>
+      <a href="descompressao.html" class="nav-link active">
+        <i class="ph ph-heartbeat"></i> Descompressão
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-container">
+
+    <div class="top-banner">
+      <h1>Espaço de Descompressão</h1>
+      <p>Sei que a universidade requer tempo e dedicação, mas por que não dar uma relaxada e cuidar da saúde mental?</p>
+    </div>
+
+    <!-- GRID LADO A LADO -->
+    <div class="decomp-grid">
+
+      <!-- MÓDULO 1: RESPIRAÇÃO GUIADA -->
+      <div class="card" id="breathing-card">
+        <div>
+          <div class="card-title">
+            <i class="ph ph-wind"></i> Respiração Guiada (4s / 4s)
+          </div>
+          <div class="card-subtitle">Siga o ritmo suave do círculo para desacelerar os batimentos e focar no momento presente antes dos seus mecanismos.</div>
+        </div>
+
+        <div class="breathing-container">
+          <div class="breathing-circle-wrapper">
+            <div class="breathing-circle" id="breathing-circle-elem">Preparar</div>
+          </div>
+          <div class="breathing-controls">
+            <button class="btn btn-blue" id="btn-start-breath">
+              <i class="ph ph-play" id="icon-breath-play"></i> <span id="text-breath-play">Iniciar Exercício</span>
+            </button>
+            <button class="btn btn-outline" id="btn-stop-breath">
+              <i class="ph ph-stop"></i> Parar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÓDULO 2: DESABAFO RÁPIDO (JOGAR FORA) -->
+      <div class="card">
+        <div>
+          <div class="card-title">
+            <i class="ph ph-trash"></i> Desabafo Rápido (Jogar Fora)
+          </div>
+          <div class="card-subtitle">Escreva dúvidas, frustrações ou ansiedades com o conteúdo. Ao clicar, elas serão totalmente descartadas.</div>
+        </div>
+
+        <div class="shredder-box">
+          <textarea id="input-desabafo" placeholder="Escreva o que está pesando na sua mente agora..."></textarea>
+
+          <div class="shredder-footer-area">
+            <div class="shredder-actions">
+              <button class="btn btn-shred" id="btn-jogar-fora">
+                <i class="ph ph-fire"></i> Amassar e Jogar Fora
+              </button>
+            </div>
+            <div class="desabafo-status-msg" id="status-msg">
+              <i class="ph ph-sparkle"></i> Pronto! Seus pensamentos foram liberados.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MÓDULO 3: SONS RELAXANTES -->
+    <div class="card" style="margin-top: 2rem;">
+      <div class="card-title">
+        <i class="ph ph-headphones"></i> Sons Relaxantes para Foco e Paz
+      </div>
+      <div class="card-subtitle" style="margin-bottom: 1rem;">Clique em um ambiente sonoro para acionar a síntese de áudio relaxante durante sua leitura.</div>
+
+      <div class="sounds-grid">
+        <div class="sound-card" data-sound="mar">
+          <i class="ph ph-waves"></i>
+          <span>Ondas do Mar</span>
+        </div>
+        <div class="sound-card" data-sound="chuva">
+          <i class="ph ph-cloud-rain"></i>
+          <span>Chuva Suave</span>
+        </div>
+        <div class="sound-card" data-sound="cafeteria">
+          <i class="ph ph-coffee"></i>
+          <span>Cafeteria Acolhedora</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ÁUDIOS PROCEDURAIS VIA WEB AUDIO API -->
+  <script>
+    class AmbientSoundPlayer {
+      constructor() {
+        this.ctx = null;
+        this.activeSound = null;
+        this.gainNode = null;
+        this.nodes = [];
+      }
+
+      initContext() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      stop() {
+        if (this.nodes.length > 0) {
+          this.nodes.forEach(node => {
+            try { node.stop(); } catch(e){}
+            try { node.disconnect(); } catch(e){}
+          });
+          this.nodes = [];
+        }
+        if (this.gainNode) {
+          try { this.gainNode.disconnect(); } catch(e){}
+          this.gainNode = null;
+        }
+        this.activeSound = null;
+      }
+
+      play(type) {
+        this.initContext();
+        if (this.activeSound === type) {
+          this.stop();
+          return false;
+        }
+
+        this.stop();
+        this.activeSound = type;
+        
+        this.gainNode = this.ctx.createGain();
+        this.gainNode.connect(this.ctx.destination);
+
+        if (type === 'chuva') {
+          this.playRain();
+        } else if (type === 'mar') {
+          this.playOcean();
+        } else if (type === 'cafeteria') {
+          this.playCoffeeShop();
+        }
+        return true;
+      }
+
+      playRain() {
+        const bufferSize = 2 * this.ctx.sampleRate;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+        
+        for (let i = 0; i < bufferSize; i++) {
+          const white = Math.random() * 2 - 1;
+          b0 = 0.99886 * b0 + white * 0.0555179;
+          b1 = 0.99332 * b1 + white * 0.0750759;
+          b2 = 0.96900 * b2 + white * 0.1538520;
+          b3 = 0.86650 * b3 + white * 0.3104856;
+          b4 = 0.55000 * b4 + white * 0.5329522;
+          b5 = -0.7616 * b5 - white * 0.0168980;
+          output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+          output[i] *= 0.05;
+          b6 = white * 0.115926;
+        }
+
+        const whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000;
+
+        this.gainNode.gain.setValueAtTime(0.3, this.ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(this.gainNode);
+        whiteNoise.start();
+        this.nodes.push(whiteNoise);
+      }
+
+      playOcean() {
+        const bufferSize = this.ctx.sampleRate * 5;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * 0.2;
+        }
+
+        const whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 400;
+        filter.Q.value = 0.8;
+
+        const lfo = this.ctx.createOscillator();
+        lfo.frequency.value = 0.15;
+
+        const lfoGain = this.ctx.createGain();
+        lfoGain.gain.value = 300;
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(filter.frequency);
+
+        this.gainNode.gain.setValueAtTime(0.5, this.ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(this.gainNode);
+
+        whiteNoise.start();
+        lfo.start();
+        this.nodes.push(whiteNoise, lfo);
+      }
+
+      playCoffeeShop() {
+        const bufferSize = this.ctx.sampleRate * 3;
+        const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = (Math.random() * 2 - 1) * 0.15;
+        }
+
+        const whiteNoise = this.ctx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 350;
+
+        const filter2 = this.ctx.createBiquadFilter();
+        filter2.type = 'peaking';
+        filter2.frequency.value = 600;
+        filter2.gain.value = 8;
+        filter2.Q.value = 2;
+
+        this.gainNode.gain.setValueAtTime(0.4, this.ctx.currentTime);
+
+        whiteNoise.connect(filter);
+        filter.connect(filter2);
+        filter2.connect(this.gainNode);
+
+        whiteNoise.start();
+        this.nodes.push(whiteNoise);
+      }
+    }
+  </script>
+
+  <!-- LÓGICA DE NAVEGAÇÃO E RECURSOS DE DESCOMPRESSÃO -->
+  <script>
+    let breathInterval = null;
+    let breathRunning = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Menu Lateral
+      const openSidebarBtn = document.getElementById('open-sidebar');
+      const closeSidebarBtn = document.getElementById('close-sidebar');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+
+      function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
+
+      if (openSidebarBtn) openSidebarBtn.addEventListener('click', toggleSidebar);
+      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
+      if (overlay) overlay.addEventListener('click', toggleSidebar);
+
+      // Sons Relaxantes
+      const soundCards = document.querySelectorAll('.sound-card');
+      const player = new AmbientSoundPlayer();
+
+      soundCards.forEach(card => {
+        card.addEventListener('click', () => {
+          const soundType = card.getAttribute('data-sound');
+          const isPlaying = card.classList.contains('active');
+
+          soundCards.forEach(c => c.classList.remove('active'));
+
+          if (!isPlaying) {
+            const turnedOn = player.play(soundType);
+            if (turnedOn) card.classList.add('active');
+          } else {
+            player.stop();
+          }
+        });
+      });
+
+      // Respiração Guiada
+      const circleElem = document.getElementById('breathing-circle-elem');
+      const btnStartBreath = document.getElementById('btn-start-breath');
+      const btnStopBreath = document.getElementById('btn-stop-breath');
+      const iconBreathPlay = document.getElementById('icon-breath-play');
+      const textBreathPlay = document.getElementById('text-breath-play');
+
+      function runBreathingCycle() {
+        if (!breathRunning) return;
+
+        circleElem.textContent = "Inspira...";
+        circleElem.className = "breathing-circle inhale";
+
+        breathInterval = setTimeout(() => {
+          if (!breathRunning) return;
+
+          circleElem.textContent = "Expira...";
+          circleElem.className = "breathing-circle exhale";
+
+          breathInterval = setTimeout(() => {
+            if (breathRunning) {
+              runBreathingCycle();
+            }
+          }, 4000);
+
+        }, 4000);
+      }
+
+      if (btnStartBreath) {
+        btnStartBreath.addEventListener('click', () => {
+          if (!breathRunning) {
+            breathRunning = true;
+            iconBreathPlay.className = "ph ph-pause";
+            textBreathPlay.textContent = "Pausar";
+            runBreathingCycle();
+          } else {
+            breathRunning = false;
+            clearTimeout(breathInterval);
+            iconBreathPlay.className = "ph ph-play";
+            textBreathPlay.textContent = "Continuar";
+            circleElem.textContent = "Pausado";
+            circleElem.className = "breathing-circle";
+          }
+        });
+      }
+
+      if (btnStopBreath) {
+        btnStopBreath.addEventListener('click', () => {
+          breathRunning = false;
+          clearTimeout(breathInterval);
+          if (iconBreathPlay) iconBreathPlay.className = "ph ph-play";
+          if (textBreathPlay) textBreathPlay.textContent = "Iniciar Exercício";
+          if (circleElem) {
+            circleElem.textContent = "Preparar";
+            circleElem.className = "breathing-circle";
+          }
+        });
+      }
+
+      // Desabafo Rápido (Jogar Fora)
+      const btnJogarFora = document.getElementById('btn-jogar-fora');
+      const inputDesabafo = document.getElementById('input-desabafo');
+      const statusMsg = document.getElementById('status-msg');
+
+      if (btnJogarFora && inputDesabafo) {
+        btnJogarFora.addEventListener('click', () => {
+          const texto = inputDesabafo.value.trim();
+          if (texto === "") {
+            statusMsg.innerHTML = '<i class="ph ph-warning" style="color: var(--alert-pink);"></i> Escreva algo antes de jogar fora.';
+            statusMsg.classList.add('show');
+            setTimeout(() => { statusMsg.classList.remove('show'); }, 3000);
+            return;
+          }
+
+          inputDesabafo.classList.add('shredding');
+
+          setTimeout(() => {
+            inputDesabafo.value = "";
+            inputDesabafo.classList.remove('shredding');
+            
+            statusMsg.innerHTML = '<i class="ph ph-sparkle"></i> Pronto! Seus pensamentos pesados foram descartados.';
+            statusMsg.classList.add('show');
+
+            setTimeout(() => {
+              statusMsg.classList.remove('show');
+            }, 4000);
+          }, 700);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

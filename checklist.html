@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checklist de Conteúdos - Química Orgânica II - UFCG</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Biblioteca de Confetti para Comemoração -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. VARIÁVEIS E CONFIGURAÇÕES GLOBAIS (Paleta e Estilo da Matriz)
+       ========================================================================== */
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --shadow-hover: 0 8px 24px rgba(30, 58, 138, 0.12);
+      --radius: 18px;
+      --success-green: #059669;
+      --success-green-bg: #ECFDF5;
+
+      /* Mapeamento das variáveis do checklist para a paleta da matriz */
+      --primary-green: var(--blue-primary);
+      --primary-green-dark: var(--blue-hover);
+      --primary-green-light: var(--blue-light);
+      --accent-gold: var(--blue-accent);
+      --accent-gold-light: var(--blue-soft);
+      --bg-offwhite: var(--blue-soft);
+      --text-muted: var(--gray-medium);
+
+      /* Tags de Prioridade / Tipo */
+      --tag-high-bg: #E0F2FE;
+      --tag-high-color: #1E3A8A;
+      --tag-medium-bg: #fef3c7;
+      --tag-medium-color: #92400e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================================
+       2. BOTÃO FLUTUANTE DE MENU E SIDEBAR LATERAL
+       ========================================================================== */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i {
+      font-size: 1.8rem;
+      color: var(--blue-primary);
+    }
+
+    .logo-container h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo-container h1 span {
+      color: var(--blue-accent);
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover {
+      color: var(--blue-primary);
+    }
+
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .alarm-badge {
+      display: none;
+      margin-left: auto;
+      color: #EF476F;
+      font-size: 1.2rem;
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAlarm {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ==========================================================================
+       3. CONTEÚDO PRINCIPAL
+       ========================================================================== */
+    .main-container {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 5rem;
+      transition: padding 0.3s ease;
+    }
+
+    /* BANNER SUPERIOR */
+    .header-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      padding: 2.2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-banner p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .matrix-stats {
+      background-color: var(--white);
+      padding: 0.8rem 1.4rem;
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .matrix-stats div {
+      text-align: center;
+    }
+
+    .matrix-stats strong {
+      display: block;
+      font-size: 1.3rem;
+      color: var(--blue-primary);
+    }
+
+    .matrix-stats span {
+      font-size: 0.75rem;
+      color: var(--gray-medium);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       4. BARRA DE CONTROLES E ABAS
+       ========================================================================== */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .area-tabs {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .tab-btn {
+      background-color: var(--white);
+      border: 1px solid var(--gray-light);
+      padding: 0.7rem 1.2rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      border-color: var(--blue-primary);
+      color: var(--blue-primary);
+    }
+
+    .tab-btn.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border-color: var(--blue-primary);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .area-select-mobile {
+      display: none;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      border: 2px solid var(--blue-primary);
+      background-color: var(--white);
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+    }
+
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.7rem 1rem 0.7rem 2.5rem;
+      border-radius: 12px;
+      border: 1px solid var(--gray-light);
+      background-color: var(--white);
+      font-size: 0.88rem;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--blue-primary);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-medium);
+      font-size: 1.1rem;
+    }
+
+    /* ==========================================================================
+       5. CARD DA SEÇÃO DA UNIDADE / CHECKLIST
+       ========================================================================== */
+    .discipline-block {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+      margin-bottom: 1.8rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .discipline-block.completed-discipline {
+      border: 2px solid var(--blue-primary);
+      background: linear-gradient(135deg, var(--white) 0%, var(--blue-light) 100%);
+      box-shadow: 0 8px 30px rgba(30, 58, 138, 0.15);
+    }
+
+    .discipline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid var(--blue-soft);
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .discipline-header h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .discipline-header h3 i {
+      color: var(--blue-primary);
+    }
+
+    .discipline-header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .badge-total {
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #BFDBFE;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .discipline-progress-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .discipline-progress-text {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--gray-medium);
+    }
+
+    .badge-completed {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 700;
+      font-size: 0.78rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      display: none;
+      align-items: center;
+      gap: 0.3rem;
+      animation: pulse-badge 1.5s infinite;
+    }
+
+    .discipline-block.completed-discipline .badge-completed {
+      display: inline-flex;
+    }
+
+    @keyframes pulse-badge {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    /* TOPICS CHECKLIST CONTAINER */
+    .topics-checklist-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .topic-item {
+      background-color: var(--blue-soft);
+      border: 1px solid var(--gray-light);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      transition: all 0.2s ease;
+    }
+
+    .topic-item:hover {
+      border-color: var(--gray-medium);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .topic-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .topic-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .topic-name i {
+      color: var(--blue-primary);
+      font-size: 1.1rem;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .topic-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    .chapter-tag {
+      background-color: #F0F9FF;
+      color: var(--gray-medium);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--gray-light);
+    }
+
+    .priority-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .priority-high {
+      background-color: var(--tag-high-bg);
+      color: var(--tag-high-color);
+    }
+
+    .priority-medium {
+      background-color: var(--tag-medium-bg);
+      color: var(--tag-medium-color);
+    }
+
+    /* OPÇÕES DO CHECKLIST */
+    .checklist-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.4rem;
+    }
+
+    .check-opt-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--white);
+      border: 1px solid var(--gray-light);
+      padding: 0.55rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .check-opt-label:hover {
+      border-color: var(--blue-primary);
+      color: var(--blue-primary);
+    }
+
+    .check-opt-label input {
+      display: none;
+    }
+
+    .custom-checkmark {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--gray-medium);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      background-color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .custom-checkmark i {
+      font-size: 0.8rem;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .check-opt-label input:checked + .custom-checkmark {
+      background-color: var(--blue-primary);
+      border-color: var(--blue-primary);
+      color: var(--white);
+    }
+
+    .check-opt-label input:checked + .custom-checkmark i {
+      opacity: 1;
+    }
+
+    .check-opt-label input:checked ~ .opt-text {
+      text-decoration: line-through;
+      color: var(--gray-medium);
+    }
+
+    /* ESTADO CONCLUÍDO DO TÓPICO */
+    .topic-item.topic-done {
+      border-color: var(--blue-primary);
+      background-color: var(--blue-light);
+    }
+
+    .topic-item.topic-done .topic-name {
+      color: var(--blue-hover);
+    }
+
+    /* ==========================================================================
+       6. RESPONSIVIDADE
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .main-container {
+        max-width: 100%;
+        padding: 2.5rem 2rem 2rem 5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 2rem 1.2rem;
+      }
+
+      .header-banner {
+        padding: 1.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .matrix-stats {
+        width: 100%;
+        justify-content: space-around;
+      }
+
+      .controls-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .area-tabs {
+        display: none;
+      }
+
+      .area-select-mobile {
+        display: block;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .discipline-block {
+        padding: 1.2rem;
+      }
+
+      .checklist-options {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .floating-menu-btn {
+        top: 1rem;
+        left: 1rem;
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+      }
+
+      .header-banner h2 {
+        font-size: 1.35rem;
+      }
+
+      .header-banner p {
+        font-size: 0.85rem;
+      }
+
+      .discipline-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .discipline-header h3 {
+        font-size: 1.1rem;
+      }
+
+      .discipline-header-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .checklist-options {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      .check-opt-label {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.75rem;
+      }
+
+      .topic-item {
+        padding: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <!-- OVERLAY SOMBREAMENTO -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL FLUTUANTE -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <!-- ABAS LATERAIS DO PROJETO -->
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link">
+        <i class="ph ph-house-line"></i> Início
+      </a>
+      <a href="matriz.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Matriz
+      </a>
+      <a href="checklist.html" class="nav-link active">
+        <i class="ph ph-check-square"></i> Checklist
+      </a>
+      <a href="cronometro.html" class="nav-link">
+        <i class="ph ph-timer"></i> Cronômetro/Pomodoro
+      </a>
+      <a href="cronograma.html" class="nav-link">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+        <i class="ph ph-bell-ringing alarm-badge" id="revisao-alarm-icon" title="Existem revisões atrasadas!"></i>
+      </a>
+      <a href="descompressao.html" class="nav-link">
+        <i class="ph ph-heartbeat"></i> Descompressão
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-container">
+
+    <!-- BANNER DE CABEÇALHO -->
+    <div class="header-banner">
+      <div>
+        <h2>Checklist de Química Orgânica</h2>
+        <p>Acompanhe o seu progresso detalhado por Leitura, Vídeo-aula, Questões e Revisão.</p>
+      </div>
+      
+    </div>
+
+    <!-- CONTROLES E BUSCA -->
+    <div class="controls-bar">
+      <div class="area-tabs">
+        <button class="tab-btn active" data-area="todas"><i class="ph ph-squares-four"></i> Todas</button>
+        <button class="tab-btn" data-area="unidade1"><i class="ph ph-atom"></i> Unidade I</button>
+        <button class="tab-btn" data-area="unidade2"><i class="ph ph-test-tube"></i> Unidade II</button>
+        <button class="tab-btn" data-area="unidade3"><i class="ph ph-molecule"></i> Unidade III</button>
+        <button class="tab-btn" data-area="unidade4"><i class="ph ph-arrows-clockwise"></i> Unidade IV</button>
+      </div>
+
+      <!-- SELECT PARA MOBILE -->
+      <select class="area-select-mobile" id="area-select-mobile">
+        <option value="todas">Todas as Unidades</option>
+        <option value="unidade1">Unidade I: Aromaticidade</option>
+        <option value="unidade2">Unidade II: Derivados de Ácidos</option>
+        <option value="unidade3">Unidade III: Aldeídos e Cetonas</option>
+        <option value="unidade4">Unidade IV: Carbono Alfa</option>
+      </select>
+
+      <div class="search-box">
+        <i class="ph ph-magnifying-glass"></i>
+        <input type="text" id="matrix-search" placeholder="Buscar tópico ou capítulo...">
+      </div>
+    </div>
+
+    <!-- CONTAINER DAS UNIDADES -->
+    <div id="disciplines-wrapper">
+
+      <!-- UNIDADE 1 -->
+      <div class="discipline-block" data-area-category="unidade1" data-discipline-id="u1">
+        <div class="discipline-header">
+          <h3><i class="ph ph-atom"></i> Unidade I: Aromaticidade e Reações de Aromáticos</h3>
+          <div class="discipline-header-right">
+            <span class="badge-total"><i class="ph ph-calendar-blank"></i> Prova 1: 21/10/2026</span>
+            <div class="discipline-progress-wrapper">
+              <span class="badge-completed"><i class="ph ph-trophy"></i> Unidade Concluída!</span>
+              <span class="discipline-progress-text" id="prog-u1">0% concluído</span>
+            </div>
+          </div>
+        </div>
+        <div class="topics-checklist-container">
+
+          <div class="topic-item" data-topic-id="u1-2">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Critérios de aromaticidade e Regra de Hückel</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 15</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-2-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-2-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-2-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-2-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-3">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Compostos aromáticos, antiaromáticos e não-aromáticos; policíclicos e heterocíclicos</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 15</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-3-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-3-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-3-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-3-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-4">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Substituição eletrofílica aromática: mecanismo geral; halogenação e nitração</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 15</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-4-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-4-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-4-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-4-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-5">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Sulfonação e alquilação de Friedel-Crafts</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 15</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-5-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-5-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-5-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-5-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-6">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Acilação de Friedel-Crafts; limitações e exercícios</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 15</span>
+                <span class="priority-tag priority-medium">Exercícios</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-6-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-6-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-6-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-6-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-7">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Benzenos substituídos: Efeito dos substituintes (ativadores e desativadores)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 16</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-7-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-7-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-7-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-7-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-8">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Orientação orto/para vs meta (efeitos indutivo e de ressonância)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 16</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-8-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-8-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-8-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-8-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-9">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Reações em anéis ativados e desativados</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 16</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-9-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-9-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-9-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-9-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-10">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Reatividade relativa em derivados</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 16</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-10-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-10-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-10-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-10-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u1-11">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Síntese de benzenos di/tri-substituídos e exercícios</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 16</span>
+                <span class="priority-tag priority-medium">Síntese</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-11-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-11-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-11-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u1-11-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- UNIDADE 2 -->
+      <div class="discipline-block" data-area-category="unidade2" data-discipline-id="u2">
+        <div class="discipline-header">
+          <h3><i class="ph ph-test-tube"></i> Unidade II: Derivados de Ácidos Carboxílicos</h3>
+          <div class="discipline-header-right">
+            <span class="badge-total"><i class="ph ph-calendar-blank"></i> Prova 2: 16/11/2026</span>
+            <div class="discipline-progress-wrapper">
+              <span class="badge-completed"><i class="ph ph-trophy"></i> Unidade Concluída!</span>
+              <span class="discipline-progress-text" id="prog-u2">0% concluído</span>
+            </div>
+          </div>
+        </div>
+        <div class="topics-checklist-container">
+
+          <div class="topic-item" data-topic-id="u2-1">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Carboniladas I: Derivados de ácidos carboxílicos e reatividade relativa</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 17</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-1-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-1-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-1-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-1-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u2-2">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Mecanismo de substituição nucleofílica acílica (adição-eliminação)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 17</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-2-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-2-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-2-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-2-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u2-3">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Reações de cloretos de acila e anidridos</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 17</span>
+                <span class="priority-tag priority-high">Reações</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-3-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-3-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-3-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-3-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u2-4">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Reações de ésteres: hidrólise, transesterificação e amonólise</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 17</span>
+                <span class="priority-tag priority-high">Reações</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-4-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-4-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-4-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-4-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u2-5">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Amidas e ácidos: interconversão de derivados e exercícios</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 17</span>
+                <span class="priority-tag priority-medium">Exercícios</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-5-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-5-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-5-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u2-5-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- UNIDADE 3 -->
+      <div class="discipline-block" data-area-category="unidade3" data-discipline-id="u3">
+        <div class="discipline-header">
+          <h3><i class="ph ph-molecule"></i> Unidade III: Aldeídos e Cetonas</h3>
+          <div class="discipline-header-right">
+            <span class="badge-total"><i class="ph ph-calendar-blank"></i> Prova 3: 09/12/2026</span>
+            <div class="discipline-progress-wrapper">
+              <span class="badge-completed"><i class="ph ph-trophy"></i> Unidade Concluída!</span>
+              <span class="discipline-progress-text" id="prog-u3">0% concluído</span>
+            </div>
+          </div>
+        </div>
+        <div class="topics-checklist-container">
+
+          <div class="topic-item" data-topic-id="u3-1">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Adição nucleofílica a aldeídos e cetonas: mecanismo e reatividade</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-1-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-1-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-1-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-1-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u3-2">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Hidratação; hemiacetais e acetais (proteção de carbonilas)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-high">Reações</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-2-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-2-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-2-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-2-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u3-3">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Adição de Grignard/organolítio; redução (NaBH₄, LiAlH₄)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-high">Redução/Adição</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-3-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-3-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-3-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-3-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u3-4">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Adição-eliminação: iminas e enaminas (reação com aminas)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-high">Reações</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-4-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-4-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-4-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-4-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u3-5">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Substituição nucleofílica acílica x adição nucleofílica (comparativo)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-medium">Comparativo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-5-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-5-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-5-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-5-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u3-6">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Carboniladas α,β-insaturadas: adição 1,2 vs 1,4 (adição de Michael)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 18</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-6-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-6-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-6-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u3-6-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- UNIDADE 4 -->
+      <div class="discipline-block" data-area-category="unidade4" data-discipline-id="u4">
+        <div class="discipline-header">
+          <h3><i class="ph ph-arrows-clockwise"></i> Unidade IV: Reações no Carbono Alfa e Condensações</h3>
+          <div class="discipline-header-right">
+            <span class="badge-total"><i class="ph ph-calendar-blank"></i> Prova 4: 17/02/2027</span>
+            <div class="discipline-progress-wrapper">
+              <span class="badge-completed"><i class="ph ph-trophy"></i> Unidade Concluída!</span>
+              <span class="discipline-progress-text" id="prog-u4">0% concluído</span>
+            </div>
+          </div>
+        </div>
+        <div class="topics-checklist-container">
+
+          <div class="topic-item" data-topic-id="u4-1">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Acidez dos H α; tautomeria ceto-enólica; enóis e enolatos</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 19</span>
+                <span class="priority-tag priority-high">Teoria</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-1-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-1-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-1-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-1-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u4-2">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Halogenação no carbono α; alquilação via enolatos (LDA)</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 19</span>
+                <span class="priority-tag priority-high">Reações</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-2-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-2-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-2-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-2-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+          <div class="topic-item" data-topic-id="u4-3">
+            <div class="topic-header-row">
+              <span class="topic-name"><i class="ph ph-caret-right"></i> Condensação aldólica: mecanismo e condições</span>
+              <div class="topic-meta">
+                <span class="chapter-tag">Cap. 19</span>
+                <span class="priority-tag priority-high">Mecanismo</span>
+              </div>
+            </div>
+            <div class="checklist-options">
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-3-leitura"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Leitura</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-3-video"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Vídeo-aula</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-3-questoes"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Questões</span></label>
+              <label class="check-opt-label"><input type="checkbox" class="chk-item" id="u4-3-revisao"><span class="custom-checkmark"><i class="ph ph-check"></i></span><span class="opt-text">Revisão</span></label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- SCRIPT DE CONEXÃO E PERSISTÊNCIA -->
+  <script src="app.js"></script>
+</body>
+</html>

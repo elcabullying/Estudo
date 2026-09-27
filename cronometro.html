@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Química Orgânica II - Cronômetro & Pomodoro</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- Biblioteca Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* VARIÁVEIS E CONFIGURAÇÕES GLOBAIS EM TONS DE AZUL */
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --radius: 18px;
+      --border-color: #E2E8F0;
+      --success-green: #059669;
+      --success-green-bg: #ECFDF5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* BOTÃO FLUTUANTE DE MENU */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    /* OVERLAY PARA O MENU */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* SIDEBAR LATERAL FLUTUANTE */
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i {
+      font-size: 1.8rem;
+      color: var(--blue-primary);
+    }
+
+    .logo-container h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo-container h1 span {
+      color: var(--blue-accent);
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover {
+      color: var(--blue-primary);
+    }
+
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .alarm-badge {
+      display: none;
+      margin-left: auto;
+      color: #EF476F;
+      font-size: 1.2rem;
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAlarm {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 5rem;
+      transition: padding 0.3s ease;
+    }
+
+    @media(max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 2rem 1.2rem;
+      }
+    }
+
+    /* BANNER TOPO */
+    .top-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      padding: 2.2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+    }
+
+    .top-banner h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .top-banner p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    /* SELETOR DE MODO (QUESTÃO OU POMODORO) */
+    .mode-selector-tabs {
+      display: flex;
+      background: var(--white);
+      padding: 0.4rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+      margin-bottom: 1.8rem;
+      gap: 0.5rem;
+    }
+
+    .mode-tab-btn {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-medium);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+    }
+
+    .mode-tab-btn.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    /* CARD DO CRONÔMETRO */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1.8rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-box {
+      border: 1px solid var(--border-color);
+      background: var(--blue-soft);
+      border-radius: 14px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .stat-box span {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray-medium);
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-box strong {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--blue-navy);
+    }
+
+    /* DISPLAY DO CRONÔMETRO */
+    .timer-display-container {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+      background: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .status-badge.pause-mode {
+      background: var(--success-green-bg);
+      color: var(--success-green);
+    }
+
+    .timer-clock {
+      font-size: 5rem;
+      font-weight: 800;
+      color: var(--blue-navy);
+      letter-spacing: -2px;
+      line-height: 1;
+    }
+
+    /* INPUT DE NOME DO CICLO */
+    .cycle-name-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .cycle-name-box label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--gray-medium);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .cycle-name-box input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      background: var(--white);
+    }
+
+    .cycle-name-box input:focus {
+      outline: none;
+      border-color: var(--blue-primary);
+    }
+
+    /* BOTÕES DE CONTROLE */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media(max-width: 480px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .btn {
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: filter 0.2s, transform 0.1s;
+    }
+
+    .btn:active { transform: scale(0.98); }
+    .btn:hover { filter: brightness(0.95); }
+
+    .btn-iniciar { background-color: var(--blue-primary); color: var(--white); }
+    .btn-proxima { background-color: var(--success-green); color: var(--white); }
+    .btn-secundario { background-color: var(--white); border: 1px solid var(--border-color); color: var(--text-dark); }
+
+    /* ESTILOS ESPECÍFICOS DO CONFIGURADOR POMODORO */
+    .pomodoro-config-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      border: 1px solid var(--border-color);
+      padding: 1.2rem;
+      border-radius: 12px;
+    }
+
+    @media(max-width: 600px) {
+      .pomodoro-config-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pomodoro-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .pomodoro-input-group label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--gray-medium);
+      text-transform: uppercase;
+    }
+
+    .pomodoro-input-group select, .pomodoro-input-group input {
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-weight: 700;
+      color: var(--text-dark);
+      background: var(--white);
+      font-size: 0.9rem;
+    }
+
+    /* HISTÓRICO DE CICLOS */
+    .history-card {
+      background: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .history-header {
+      margin-bottom: 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .history-header-text h2 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--blue-navy);
+      margin-bottom: 0.2rem;
+    }
+
+    .history-header-text p {
+      font-size: 0.85rem;
+      color: var(--gray-medium);
+    }
+
+    .btn-delete-selected {
+      background: rgba(239, 68, 68, 0.1);
+      color: #EF4444;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-delete-selected:hover {
+      background: #EF4444;
+      color: var(--white);
+    }
+
+    .history-empty {
+      border: 2px dashed var(--border-color);
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      color: var(--gray-medium);
+      font-size: 0.9rem;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .history-table th, .history-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+    }
+
+    .history-table th {
+      font-weight: 700;
+      color: var(--gray-medium);
+      background: var(--blue-soft);
+    }
+
+    .btn-delete-item {
+      background: rgba(239, 68, 68, 0.1);
+      color: #EF4444;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-delete-item:hover {
+      background: #EF4444;
+      color: var(--white);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <!-- OVERLAY MASCARA DE SOMBREAMENTO -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL FLUTUANTE -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <!-- ABAS LATERAIS DO PROJETO -->
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link">
+        <i class="ph ph-house-line"></i> Início
+      </a>
+      <a href="matriz.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Matriz
+      </a>
+      <a href="checklist.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Checklist
+      </a>
+      <a href="cronometro.html" class="nav-link active">
+        <i class="ph ph-timer"></i> Cronômetro/Pomodoro
+      </a>
+      <a href="cronograma.html" class="nav-link">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+        <i class="ph ph-bell-ringing alarm-badge" id="revisao-alarm-icon" title="Existem revisões atrasadas!"></i>
+      </a>
+      <a href="descompressao.html" class="nav-link">
+        <i class="ph ph-heartbeat"></i> Descompressão
+      </a>
+    </nav>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main-container">
+    
+    <div class="top-banner">
+      <h1 id="banner-titulo">Cronômetro Livre por Questão</h1>
+      <p id="banner-descricao">Meça o tempo de cada questão sem limite fixo. Ao avançar, o cronômetro reinicia para a próxima e calcula sua média.</p>
+    </div>
+
+    <!-- ABAS DE NAVEGAÇÃO ENTRE MODOS -->
+    <div class="mode-selector-tabs">
+      <button class="mode-tab-btn active" id="tab-modo-questao">
+        <i class="ph ph-target"></i> Modo Questão
+      </button>
+      <button class="mode-tab-btn" id="tab-modo-pomodoro">
+        <i class="ph ph-clock"></i> Modo Pomodoro
+      </button>
+    </div>
+
+    <!-- BLOCO DO CRONÔMETRO -->
+    <div class="card">
+      <div class="cycle-name-box">
+        <label for="input-nome-ciclo" id="label-nome-ciclo">Nome do Bloco / Simulado:</label>
+        <input type="text" id="input-nome-ciclo" placeholder="Ex: Exercícios Cap. 15 - Reações Aromáticas">
+      </div>
+
+      <!-- PAINEL DE ESTATÍSTICAS (MODO QUESTÃO) -->
+      <div class="stats-row" id="panel-stats-questao">
+        <div class="stat-box">
+          <span>Questão Atual</span>
+          <strong id="cron-questao-atual">1</strong>
+        </div>
+        <div class="stat-box">
+          <span>Média por Questão</span>
+          <strong id="cron-media-questao">00:00</strong>
+        </div>
+      </div>
+
+      <!-- PAINEL DE ESTATÍSTICAS (MODO POMODORO) -->
+      <div class="stats-row" id="panel-stats-pomodoro" style="display: none;">
+        <div class="stat-box">
+          <span>Ciclo Atual</span>
+          <strong id="pomo-ciclo-atual">1</strong>
+        </div>
+        <div class="stat-box">
+          <span>Foco Acumulado</span>
+          <strong id="pomo-foco-total">00:00:00</strong>
+        </div>
+      </div>
+
+      <!-- DISPLAY DO CRONÔMETRO -->
+      <div class="timer-display-container">
+        <div class="status-badge" id="pomo-status-badge" style="display: none;">Foco em Estudos</div>
+        <div class="timer-clock" id="timer-display">00:00</div>
+      </div>
+
+      <!-- CONTROLES MODO QUESTÃO -->
+      <div id="panel-controls-questao">
+        <div class="controls-grid">
+          <button class="btn btn-iniciar" id="btn-iniciar-pausar">
+            <i class="ph ph-play" id="icon-play-pause"></i> <span id="text-iniciar-pausar">Iniciar</span>
+          </button>
+          <button class="btn btn-proxima" id="btn-proxima">
+            <i class="ph ph-arrow-right"></i> Próxima Questão
+          </button>
+        </div>
+
+        <div class="controls-grid">
+          <button class="btn btn-secundario" id="btn-finalizar">
+            <i class="ph ph-flag-checkered"></i> Finalizar Ciclo
+          </button>
+          <button class="btn btn-secundario" id="btn-reiniciar">
+            <i class="ph ph-arrow-counter-clockwise"></i> Reiniciar
+          </button>
+        </div>
+      </div>
+
+      <!-- CONTROLES MODO POMODORO -->
+      <div id="panel-controls-pomodoro" style="display: none;">
+        <div class="controls-grid">
+          <button class="btn btn-iniciar" id="pomo-btn-iniciar-pausar">
+            <i class="ph ph-play" id="pomo-icon-play-pause"></i> <span id="pomo-text-iniciar-pausar">Iniciar Foco</span>
+          </button>
+          <button class="btn btn-proxima" id="pomo-btn-pular">
+            <i class="ph ph-fast-forward"></i> Pular Fase
+          </button>
+        </div>
+
+        <div class="controls-grid" style="margin-bottom: 1.5rem;">
+          <button class="btn btn-secundario" id="pomo-btn-finalizar">
+            <i class="ph ph-flag-checkered"></i> Finalizar & Salvar
+          </button>
+          <button class="btn btn-secundario" id="pomo-btn-reset">
+            <i class="ph ph-arrow-counter-clockwise"></i> Reiniciar
+          </button>
+        </div>
+
+        <!-- CONFIGURAÇÕES DE TEMPO POMODORO -->
+        <div class="pomodoro-config-grid">
+          <div class="pomodoro-input-group">
+            <label>Modo de Tempo</label>
+            <select id="pomo-select-preset">
+              <option value="default" selected>Padrão (25m / 5m)</option>
+              <option value="extended">Estendido (50m / 10m)</option>
+              <option value="custom">Personalizado</option>
+            </select>
+          </div>
+          <div class="pomodoro-input-group">
+            <label>Tempo Foco (min)</label>
+            <input type="number" id="pomo-input-foco" value="25" min="1" max="180" disabled>
+          </div>
+          <div class="pomodoro-input-group">
+            <label>Tempo Pausa (min)</label>
+            <input type="number" id="pomo-input-pausa" value="5" min="1" max="60" disabled>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HISTÓRICOS SEPARADOS -->
+    <div class="history-card">
+      <div class="history-header">
+        <div class="history-header-text">
+          <h2><i class="ph ph-clock-counter-clockwise"></i> Histórico</h2>
+          <p>Seus registros ficam salvos no navegador e permanecem disponíveis quando você sair e voltar à página.</p>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 1: HISTÓRICO DE QUESTÕES -->
+      <div style="margin-bottom: 2rem;">
+        <div class="history-header" style="margin-bottom: 0.8rem;">
+          <div class="history-header-text">
+            <h3 style="margin: 0;"><i class="ph ph-target"></i> Histórico de Questões</h3>
+            <p>Registros dos seus blocos de resolução de questões.</p>
+          </div>
+          <button class="btn-delete-selected" id="btn-excluir-questoes-selecionados" style="display: none;">
+            <i class="ph ph-trash"></i> Excluir Selecionados
+          </button>
+        </div>
+        <div id="container-historico-questoes">
+          <div class="history-empty">Nenhum registro de questões concluído ainda.</div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO 2: HISTÓRICO DE POMODOROS -->
+      <div>
+        <div class="history-header" style="margin-bottom: 0.8rem;">
+          <div class="history-header-text">
+            <h3 style="margin: 0;"><i class="ph ph-clock"></i> Histórico de Pomodoros</h3>
+            <p>Registros das suas sessões de foco e pausas.</p>
+          </div>
+          <button class="btn-delete-selected" id="btn-excluir-pomodoros-selecionados" style="display: none;">
+            <i class="ph ph-trash"></i> Excluir Selecionados
+          </button>
+        </div>
+        <div id="container-historico-pomodoros">
+          <div class="history-empty">Nenhuma sessão Pomodoro concluída ainda.</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SCRIPT GLOBAL UNIFICADO (app.js) -->
+  <script src="app.js"></script>
+
+  <!-- SCRIPT DO MENU LATERAL -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const openSidebarBtn = document.getElementById('open-sidebar');
+      const closeSidebarBtn = document.getElementById('close-sidebar');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+
+      function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+      }
+
+      if (openSidebarBtn) openSidebarBtn.addEventListener('click', toggleSidebar);
+      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', toggleSidebar);
+      if (overlay) overlay.addEventListener('click', toggleSidebar);
+    });
+  </script>
+
+  <!-- SCRIPT DE LÓGICA DO CRONÔMETRO / POMODORO E PERSISTÊNCIA ROBUSTA -->
+  <script>
+    let currentMode = 'questao'; 
+    let cronInterval = null;
+    let segundosDecorridos = 0;
+    let questaoAtualNum = 1;
+    let temposQuestoes = [];
+    let cronRodando = false;
+
+    let pomoInterval = null;
+    let pomoRodando = false;
+    let pomoFase = 'foco'; 
+    let pomoTempoRestante = 25 * 60;
+    let pomoTempoFocoMin = 25;
+    let pomoTempoPausaMin = 5;
+    let pomoCiclosConcluidos = 0;
+    let pomoSegundosFocoTotal = 0;
+
+    // Gerenciamento de Estado Global e Persistência Local
+    window.userState = window.userState || {
+      questaoHistorico: [],
+      pomodoroHistorico: []
+    };
+
+    function carregarDadosSalvos() {
+      try {
+        const salvo = localStorage.getItem('quimica_organica_cronometro_state');
+        if (salvo) {
+          const dados = JSON.parse(salvo);
+          window.userState.questaoHistorico = dados.questaoHistorico || [];
+          window.userState.pomodoroHistorico = dados.pomodoroHistorico || [];
+        }
+      } catch (e) {
+        console.error("Erro ao carregar dados do localStorage:", e);
+      }
+    }
+
+    function saveDataToCloud() {
+      try {
+        const dadosParaSalvar = {
+          questaoHistorico: window.userState.questaoHistorico || [],
+          pomodoroHistorico: window.userState.pomodoroHistorico || []
+        };
+        localStorage.setItem('quimica_organica_cronometro_state', JSON.stringify(dadosParaSalvar));
+        
+        // Sincroniza também com o app.js se a função existir
+        if (typeof saveLocalState === 'function') {
+          saveLocalState();
+        }
+      } catch (e) {
+        console.error("Erro ao salvar dados no localStorage:", e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarDadosSalvos();
+      initAppPages();
+    });
+
+    function tocarAlarmeSonoro(freq = 587.33, duracao = 0.4) {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + duracao);
+      } catch (e) {
+        console.log("Áudio não suportado ou bloqueado pelo navegador.");
+      }
+    }
+
+    function dispararConfetes() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    function formatarTempoMMSS(segundos) {
+      const m = Math.floor(segundos / 60).toString().padStart(2, '0');
+      const s = (segundos % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    }
+
+    function formatarTempoHHMMSS(segundos) {
+      const h = Math.floor(segundos / 3600).toString().padStart(2, '0');
+      const m = Math.floor((segundos % 3600) / 60).toString().padStart(2, '0');
+      const s = (segundos % 60).toString().padStart(2, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function initAppPages() {
+      const tabQuestao = document.getElementById('tab-modo-questao');
+      const tabPomodoro = document.getElementById('tab-modo-pomodoro');
+      const bannerTitulo = document.getElementById('banner-titulo');
+      const bannerDesc = document.getElementById('banner-descricao');
+      const labelNomeCiclo = document.getElementById('label-nome-ciclo');
+      const inputNomeCiclo = document.getElementById('input-nome-ciclo');
+
+      const panelStatsQuestao = document.getElementById('panel-stats-questao');
+      const panelStatsPomodoro = document.getElementById('panel-stats-pomodoro');
+      const panelControlsQuestao = document.getElementById('panel-controls-questao');
+      const panelControlsPomodoro = document.getElementById('panel-controls-pomodoro');
+      const pomoStatusBadge = document.getElementById('pomo-status-badge');
+
+      tabQuestao.addEventListener('click', () => {
+        if (currentMode === 'questao') return;
+        pausarAmbos();
+        currentMode = 'questao';
+
+        tabQuestao.classList.add('active');
+        tabPomodoro.classList.remove('active');
+
+        bannerTitulo.textContent = "Cronômetro Livre por Questão";
+        bannerDesc.textContent = "Meça o tempo de cada questão sem limite fixo. Ao avançar, o cronômetro reinicia para a próxima e calcula sua média.";
+        labelNomeCiclo.textContent = "Nome do Bloco / Simulado:";
+        inputNomeCiclo.placeholder = "Ex: Exercícios Cap. 15 - Reações Aromáticas";
+
+        panelStatsQuestao.style.display = "grid";
+        panelStatsPomodoro.style.display = "none";
+        panelControlsQuestao.style.display = "block";
+        panelControlsPomodoro.style.display = "none";
+        pomoStatusBadge.style.display = "none";
+
+        resetarDisplayQuestao();
+      });
+
+      tabPomodoro.addEventListener('click', () => {
+        if (currentMode === 'pomodoro') return;
+        pausarAmbos();
+        currentMode = 'pomodoro';
+
+        tabPomodoro.classList.add('active');
+        tabQuestao.classList.remove('active');
+
+        bannerTitulo.textContent = "Pomodoro de Estudos";
+        bannerDesc.textContent = "Gerencie seus ciclos de foco e pausas para manter a produtividade alta e evitar o desgaste mental.";
+        labelNomeCiclo.textContent = "Nome da Sessão / Matéria:";
+        inputNomeCiclo.placeholder = "Ex: Estudo Teórico - Mecanismos de Substituição";
+
+        panelStatsQuestao.style.display = "none";
+        panelStatsPomodoro.style.display = "grid";
+        panelControlsQuestao.style.display = "none";
+        panelControlsPomodoro.style.display = "block";
+        pomoStatusBadge.style.display = "inline-block";
+
+        resetarDisplayPomodoro();
+      });
+
+      initLógicaQuestao();
+      initLógicaPomodoro();
+      renderizarHistoricoCronometro();
+    }
+
+    function pausarAmbos() {
+      if (cronInterval) clearInterval(cronInterval);
+      if (pomoInterval) clearInterval(pomoInterval);
+      cronRodando = false;
+      pomoRodando = false;
+    }
+
+    function initLógicaQuestao() {
+      const display = document.getElementById('timer-display');
+      const btnIniciarPausar = document.getElementById('btn-iniciar-pausar');
+      const iconPlayPause = document.getElementById('icon-play-pause');
+      const textIniciarPausar = document.getElementById('text-iniciar-pausar');
+      const btnProxima = document.getElementById('btn-proxima');
+      const btnFinalizar = document.getElementById('btn-finalizar');
+      const btnReiniciar = document.getElementById('btn-reiniciar');
+      const qAtualEl = document.getElementById('cron-questao-atual');
+      const mediaEl = document.getElementById('cron-media-questao');
+      const inputNomeCiclo = document.getElementById('input-nome-ciclo');
+
+      function atualizarMedia() {
+        if (temposQuestoes.length === 0) {
+          if (mediaEl) mediaEl.textContent = "00:00";
+          return;
+        }
+        const soma = temposQuestoes.reduce((acc, curr) => acc + curr, 0);
+        const media = Math.round(soma / temposQuestoes.length);
+        if (mediaEl) mediaEl.textContent = formatarTempoMMSS(media);
+      }
+
+      btnIniciarPausar.addEventListener('click', () => {
+        if (!cronRodando) {
+          cronRodando = true;
+          iconPlayPause.className = "ph ph-pause";
+          textIniciarPausar.textContent = "Pausar";
+          
+          cronInterval = setInterval(() => {
+            segundosDecorridos++;
+            display.textContent = formatarTempoMMSS(segundosDecorridos);
+          }, 1000);
+        } else {
+          cronRodando = false;
+          iconPlayPause.className = "ph ph-play";
+          textIniciarPausar.textContent = "Continuar";
+          clearInterval(cronInterval);
+        }
+      });
+
+      btnProxima.addEventListener('click', () => {
+        if (segundosDecorridos > 0 || cronRodando) {
+          temposQuestoes.push(segundosDecorridos);
+        } else {
+          temposQuestoes.push(0);
+        }
+        
+        questaoAtualNum++;
+        if (qAtualEl) qAtualEl.textContent = questaoAtualNum;
+        
+        segundosDecorridos = 0;
+        display.textContent = "00:00";
+        atualizarMedia();
+      });
+
+      btnReiniciar.addEventListener('click', () => {
+        resetarDisplayQuestao();
+      });
+
+      btnFinalizar.addEventListener('click', () => {
+        if (segundosDecorridos > 0) {
+          temposQuestoes.push(segundosDecorridos);
+        }
+
+        if (temposQuestoes.length === 0) {
+          alert("Nenhum tempo registrado neste ciclo.");
+          return;
+        }
+
+        clearInterval(cronInterval);
+        cronRodando = false;
+        dispararConfetes();
+
+        const somaTotal = temposQuestoes.reduce((a, b) => a + b, 0);
+        const mediaGeral = Math.round(somaTotal / temposQuestoes.length);
+        const nomeBloco = inputNomeCiclo && inputNomeCiclo.value.trim() !== "" ? inputNomeCiclo.value.trim() : "Treino de Questões";
+
+        const novoCiclo = {
+          id: Date.now(),
+          tipo: 'questao',
+          nome: nomeBloco,
+          data: new Date().toLocaleDateString('pt-BR'),
+          questoesRespondidas: temposQuestoes.length,
+          tempoTotal: formatarTempoMMSS(somaTotal),
+          mediaTempo: formatarTempoMMSS(mediaGeral)
+        };
+
+        if (!Array.isArray(window.userState.questaoHistorico)) {
+          window.userState.questaoHistorico = [];
+        }
+        window.userState.questaoHistorico.unshift(novoCiclo);
+
+        saveDataToCloud();
+        renderizarHistoricoCronometro();
+
+        if (inputNomeCiclo) inputNomeCiclo.value = "";
+        resetarDisplayQuestao();
+      });
+    }
+
+    function resetarDisplayQuestao() {
+      clearInterval(cronInterval);
+      cronRodando = false;
+      segundosDecorridos = 0;
+      questaoAtualNum = 1;
+      temposQuestoes = [];
+      const display = document.getElementById('timer-display');
+      const qAtualEl = document.getElementById('cron-questao-atual');
+      const mediaEl = document.getElementById('cron-media-questao');
+      const iconPlayPause = document.getElementById('icon-play-pause');
+      const textIniciarPausar = document.getElementById('text-iniciar-pausar');
+
+      if (display) display.textContent = "00:00";
+      if (qAtualEl) qAtualEl.textContent = "1";
+      if (mediaEl) mediaEl.textContent = "00:00";
+      if (iconPlayPause) iconPlayPause.className = "ph ph-play";
+      if (textIniciarPausar) textIniciarPausar.textContent = "Iniciar";
+    }
+
+    function initLógicaPomodoro() {
+      const display = document.getElementById('timer-display');
+      const pomoBadge = document.getElementById('pomo-status-badge');
+      const btnIniciarPausar = document.getElementById('pomo-btn-iniciar-pausar');
+      const iconPlayPause = document.getElementById('pomo-icon-play-pause');
+      const textIniciarPausar = document.getElementById('pomo-text-iniciar-pausar');
+      const btnPular = document.getElementById('pomo-btn-pular');
+      const btnFinalizar = document.getElementById('pomo-btn-finalizar');
+      const btnReset = document.getElementById('pomo-btn-reset');
+
+      const selectPreset = document.getElementById('pomo-select-preset');
+      const inputFoco = document.getElementById('pomo-input-foco');
+      const inputPausa = document.getElementById('pomo-input-pausa');
+      const inputNomeCiclo = document.getElementById('input-nome-ciclo');
+
+      const elCicloAtual = document.getElementById('pomo-ciclo-atual');
+      const elFocoTotal = document.getElementById('pomo-foco-total');
+
+      selectPreset.addEventListener('change', () => {
+        if (selectPreset.value === 'default') {
+          inputFoco.value = 25;
+          inputPausa.value = 5;
+          inputFoco.disabled = true;
+          inputPausa.disabled = true;
+        } else if (selectPreset.value === 'extended') {
+          inputFoco.value = 50;
+          inputPausa.value = 10;
+          inputFoco.disabled = true;
+          inputPausa.disabled = true;
+        } else {
+          inputFoco.disabled = false;
+          inputPausa.disabled = false;
+        }
+        aplicarConfiguracoesPomodoro();
+      });
+
+      inputFoco.addEventListener('change', aplicarConfiguracoesPomodoro);
+      inputPausa.addEventListener('change', aplicarConfiguracoesPomodoro);
+
+      function aplicarConfiguracoesPomodoro() {
+        if (pomoRodando) return;
+        pomoTempoFocoMin = parseInt(inputFoco.value) || 25;
+        pomoTempoPausaMin = parseInt(inputPausa.value) || 5;
+
+        if (pomoFase === 'foco') {
+          pomoTempoRestante = pomoTempoFocoMin * 60;
+        } else {
+          pomoTempoRestante = pomoTempoPausaMin * 60;
+        }
+        if (display && currentMode === 'pomodoro') {
+          display.textContent = formatarTempoMMSS(pomoTempoRestante);
+        }
+      }
+
+      btnIniciarPausar.addEventListener('click', () => {
+        if (!pomoRodando) {
+          pomoRodando = true;
+          iconPlayPause.className = "ph ph-pause";
+          textIniciarPausar.textContent = pomoFase === 'foco' ? "Pausar Foco" : "Pausar Pausa";
+
+          pomoInterval = setInterval(() => {
+            if (pomoTempoRestante > 0) {
+              pomoTempoRestante--;
+              if (pomoFase === 'foco') pomoSegundosFocoTotal++;
+              display.textContent = formatarTempoMMSS(pomoTempoRestante);
+              if (elFocoTotal) elFocoTotal.textContent = formatarTempoHHMMSS(pomoSegundosFocoTotal);
+            } else {
+              tocarAlarmeSonoro(880, 0.6);
+              if (pomoFase === 'foco') {
+                pomoCiclosConcluidos++;
+                if (elCicloAtual) elCicloAtual.textContent = pomoCiclosConcluidos + 1;
+                pomoFase = 'pausa';
+                pomoTempoRestante = pomoTempoPausaMin * 60;
+                pomoBadge.textContent = "Intervalo / Descanso";
+                pomoBadge.classList.add('pause-mode');
+                textIniciarPausar.textContent = "Pausar Pausa";
+              } else {
+                pomoFase = 'foco';
+                pomoTempoRestante = pomoTempoFocoMin * 60;
+                pomoBadge.textContent = "Foco em Estudos";
+                pomoBadge.classList.remove('pause-mode');
+                textIniciarPausar.textContent = "Pausar Foco";
+              }
+            }
+          }, 1000);
+        } else {
+          pomoRodando = false;
+          iconPlayPause.className = "ph ph-play";
+          textIniciarPausar.textContent = pomoFase === 'foco' ? "Continuar Foco" : "Continuar Pausa";
+          clearInterval(pomoInterval);
+        }
+      });
+
+      btnPular.addEventListener('click', () => {
+        clearInterval(pomoInterval);
+        pomoRodando = false;
+        iconPlayPause.className = "ph ph-play";
+
+        if (pomoFase === 'foco') {
+          pomoCiclosConcluidos++;
+          if (elCicloAtual) elCicloAtual.textContent = pomoCiclosConcluidos + 1;
+          pomoFase = 'pausa';
+          pomoTempoRestante = pomoTempoPausaMin * 60;
+          pomoBadge.textContent = "Intervalo / Descanso";
+          pomoBadge.classList.add('pause-mode');
+          textIniciarPausar.textContent = "Iniciar Pausa";
+        } else {
+          pomoFase = 'foco';
+          pomoTempoRestante = pomoTempoFocoMin * 60;
+          pomoBadge.textContent = "Foco em Estudos";
+          pomoBadge.classList.remove('pause-mode');
+          textIniciarPausar.textContent = "Iniciar Foco";
+        }
+        display.textContent = formatarTempoMMSS(pomoTempoRestante);
+      });
+
+      btnReset.addEventListener('click', () => {
+        resetarDisplayPomodoro();
+      });
+
+      btnFinalizar.addEventListener('click', () => {
+        if (pomoSegundosFocoTotal < 60) {
+          alert("Acumule pelo menos 1 minuto de foco para registrar a sessão.");
+          return;
+        }
+
+        clearInterval(pomoInterval);
+        pomoRodando = false;
+        dispararConfetes();
+
+        const nomeSessao = inputNomeCiclo && inputNomeCiclo.value.trim() !== "" ? inputNomeCiclo.value.trim() : "Sessão Pomodoro";
+
+        const novoRegistro = {
+          id: Date.now(),
+          tipo: 'pomodoro',
+          nome: nomeSessao,
+          data: new Date().toLocaleDateString('pt-BR'),
+          questoesRespondidas: `${pomoCiclosConcluidos} bloco(s)`,
+          tempoTotal: formatarTempoHHMMSS(pomoSegundosFocoTotal),
+          mediaTempo: `${pomoTempoFocoMin}m foco / ${pomoTempoPausaMin}m pausa`
+        };
+
+        if (!Array.isArray(window.userState.pomodoroHistorico)) {
+          window.userState.pomodoroHistorico = [];
+        }
+        window.userState.pomodoroHistorico.unshift(novoRegistro);
+
+        saveDataToCloud();
+        renderizarHistoricoCronometro();
+
+        if (inputNomeCiclo) inputNomeCiclo.value = "";
+        resetarDisplayPomodoro();
+      });
+    }
+
+    function resetarDisplayPomodoro() {
+      clearInterval(pomoInterval);
+      pomoRodando = false;
+      pomoFase = 'foco';
+      pomoCiclosConcluidos = 0;
+      pomoSegundosFocoTotal = 0;
+
+      const inputFoco = document.getElementById('pomo-input-foco');
+      pomoTempoFocoMin = parseInt(inputFoco.value) || 25;
+      pomoTempoRestante = pomoTempoFocoMin * 60;
+
+      const display = document.getElementById('timer-display');
+      const pomoBadge = document.getElementById('pomo-status-badge');
+      const elCicloAtual = document.getElementById('pomo-ciclo-atual');
+      const elFocoTotal = document.getElementById('pomo-foco-total');
+      const iconPlayPause = document.getElementById('pomo-icon-play-pause');
+      const textIniciarPausar = document.getElementById('pomo-text-iniciar-pausar');
+
+      if (display && currentMode === 'pomodoro') display.textContent = formatarTempoMMSS(pomoTempoRestante);
+      if (pomoBadge) {
+        pomoBadge.textContent = "Foco em Estudos";
+        pomoBadge.classList.remove('pause-mode');
+      }
+      if (elCicloAtual) elCicloAtual.textContent = "1";
+      if (elFocoTotal) elFocoTotal.textContent = "00:00:00";
+      if (iconPlayPause) iconPlayPause.className = "ph ph-play";
+      if (textIniciarPausar) textIniciarPausar.textContent = "Iniciar Foco";
+    }
+
+    function criarTabelaHistorico(registros, tipo, containerId, btnId) {
+      const container = document.getElementById(containerId);
+      const btnExcluir = document.getElementById(btnId);
+      if (!container) return;
+
+      if (!registros || registros.length === 0) {
+        container.innerHTML = `<div class="history-empty">${tipo === 'questao' ? 'Nenhum registro de questões concluído ainda.' : 'Nenhuma sessão Pomodoro concluída ainda.'}</div>`;
+        if (btnExcluir) btnExcluir.style.display = 'none';
+        return;
+      }
+
+      let html = `
+        <div class="table-responsive">
+          <table class="history-table">
+            <thead><tr>
+              <th style="width: 40px; text-align: center;"><input type="checkbox" onclick="toggleSelectAll(this, '${tipo}')"></th>
+              <th>Nome / Atividade</th><th>Data</th><th>${tipo === 'questao' ? 'Questões' : 'Ciclos'}</th>
+              <th>Tempo Total</th><th>${tipo === 'questao' ? 'Média / Questão' : 'Configuração'}</th>
+              <th style="text-align: right;">Ação</th>
+            </tr></thead><tbody>`;
+
+      registros.forEach(reg => {
+        const qtdLabel = tipo === 'questao' ? `${reg.questoesRespondidas} quest.` : reg.questoesRespondidas;
+        html += `
+          <tr>
+            <td style="text-align: center;"><input type="checkbox" class="ciclo-checkbox-${tipo}" value="${reg.id}" onchange="verificarCheckboxesSelecionados()"></td>
+            <td><strong>${reg.nome || (tipo === 'questao' ? 'Treino de Questões' : 'Sessão Pomodoro')}</strong></td>
+            <td>${reg.data}</td><td>${qtdLabel}</td><td>${reg.tempoTotal}</td><td>${reg.mediaTempo}</td>
+            <td style="text-align: right;"><button class="btn-delete-item" onclick="excluirCicloCronometro(${reg.id}, '${tipo}')"><i class="ph ph-trash"></i> Excluir</button></td>
+          </tr>`;
+      });
+
+      html += `</tbody></table></div>`;
+      container.innerHTML = html;
+      verificarCheckboxesSelecionados();
+    }
+
+    function renderizarHistoricoCronometro() {
+      const questoes = (window.userState && Array.isArray(window.userState.questaoHistorico)) ? window.userState.questaoHistorico : [];
+      const pomodoros = (window.userState && Array.isArray(window.userState.pomodoroHistorico)) ? window.userState.pomodoroHistorico : [];
+      criarTabelaHistorico(questoes, 'questao', 'container-historico-questoes', 'btn-excluir-questoes-selecionados');
+      criarTabelaHistorico(pomodoros, 'pomodoro', 'container-historico-pomodoros', 'btn-excluir-pomodoros-selecionados');
+    }
+
+    function toggleSelectAll(source, tipo) {
+      const checkboxes = document.querySelectorAll(`.ciclo-checkbox-${tipo}`);
+      checkboxes.forEach(cb => cb.checked = source.checked);
+      verificarCheckboxesSelecionados();
+    }
+
+    function verificarCheckboxesSelecionados() {
+      const q = document.querySelectorAll('.ciclo-checkbox-questao:checked').length;
+      const p = document.querySelectorAll('.ciclo-checkbox-pomodoro:checked').length;
+      const btnQ = document.getElementById('btn-excluir-questoes-selecionados');
+      const btnP = document.getElementById('btn-excluir-pomodoros-selecionados');
+      if (btnQ) btnQ.style.display = q > 0 ? 'flex' : 'none';
+      if (btnP) btnP.style.display = p > 0 ? 'flex' : 'none';
+    }
+
+    window.excluirCicloCronometro = function(id, tipo) {
+      if (!confirm("Deseja realmente excluir este registro?")) return;
+      if (window.userState) {
+        const chave = tipo === 'questao' ? 'questaoHistorico' : 'pomodoroHistorico';
+        window.userState[chave] = (window.userState[chave] || []).filter(c => Number(c.id) !== Number(id));
+      }
+      saveDataToCloud();
+      renderizarHistoricoCronometro();
+    }
+
+    document.getElementById('btn-excluir-questoes-selecionados')?.addEventListener('click', () => {
+      if (!confirm('Deseja excluir as questões selecionadas?')) return;
+      const ids = [...document.querySelectorAll('.ciclo-checkbox-questao:checked')].map(cb => Number(cb.value));
+      window.userState.questaoHistorico = (window.userState.questaoHistorico || []).filter(r => !ids.includes(Number(r.id)));
+      saveDataToCloud();
+      renderizarHistoricoCronometro();
+    });
+
+    document.getElementById('btn-excluir-pomodoros-selecionados')?.addEventListener('click', () => {
+      if (!confirm('Deseja excluir os Pomodoros selecionados?')) return;
+      const ids = [...document.querySelectorAll('.ciclo-checkbox-pomodoro:checked')].map(cb => Number(cb.value));
+      window.userState.pomodoroHistorico = (window.userState.pomodoroHistorico || []).filter(r => !ids.includes(Number(r.id)));
+      saveDataToCloud();
+      renderizarHistoricoCronometro();
+    });
+
+    window.addEventListener('pagehide', () => {
+      saveDataToCloud();
+    });
+  </script>
+</body>
+</html>

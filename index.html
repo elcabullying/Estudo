@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Química Orgânica II - UFCG</title>
+
+  <!-- Fonte Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Ícones Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <style>
+    /* VARIÁVEIS E CONFIGURAÇÕES GLOBAIS EM TONS DE AZUL */
+    :root {
+      --blue-dark: #0F172A;
+      --blue-navy: #1E3A8A;
+      --blue-primary: #2563EB;
+      --blue-hover: #1D4ED8;
+      --blue-accent: #0284C7;
+      --blue-light: #E0F2FE;
+      --blue-soft: #F0F9FF;
+      --text-dark: #1E293B;
+      --gray-medium: #64748B;
+      --gray-light: #E2E8F0;
+      --white: #FFFFFF;
+      --shadow: 0 10px 25px -5px rgba(30, 58, 138, 0.08), 0 8px 10px -6px rgba(30, 58, 138, 0.04);
+      --radius: 18px;
+      --success-green: #059669;
+      --success-green-bg: #ECFDF5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: var(--blue-soft);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* BOTÃO FLUTUANTE DE MENU */
+    .floating-menu-btn {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 990;
+      background-color: var(--blue-primary);
+      color: var(--white);
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .floating-menu-btn:hover {
+      transform: scale(1.08);
+      background-color: var(--blue-hover);
+    }
+
+    /* OVERLAY DO MENU */
+    .sidebar-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(2px);
+      z-index: 995;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* SIDEBAR LATERAL FLUTUANTE */
+    .sidebar-floating {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      background-color: var(--white);
+      box-shadow: 4px 0 25px rgba(15, 23, 42, 0.1);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow-y: auto;
+    }
+
+    .sidebar-floating.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.8rem;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--blue-navy);
+    }
+
+    .logo-container i {
+      font-size: 1.8rem;
+      color: var(--blue-primary);
+    }
+
+    .logo-container h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .logo-container h1 span {
+      color: var(--blue-accent);
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .close-sidebar-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+      transition: color 0.2s ease;
+    }
+
+    .close-sidebar-btn:hover {
+      color: var(--blue-primary);
+    }
+
+    /* NAVIGATION LINKS */
+    .nav-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      background: transparent;
+      border: none;
+      padding: 0.85rem 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: var(--gray-medium);
+      cursor: pointer;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background-color: var(--blue-light);
+      color: var(--blue-primary);
+    }
+
+    .nav-link.active {
+      background-color: var(--blue-primary);
+      color: var(--white);
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .alarm-badge {
+      display: none;
+      margin-left: auto;
+      color: #EF476F;
+      font-size: 1.2rem;
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseAlarm {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 2rem 5rem;
+      transition: padding 0.3s ease;
+    }
+
+    @media(max-width: 768px) {
+      .main-container {
+        padding: 5rem 1.2rem 2rem 1.2rem;
+      }
+    }
+
+    /* HEADER BANNER */
+    .header-banner {
+      background: linear-gradient(135deg, var(--blue-navy), var(--blue-primary));
+      color: var(--white);
+      padding: 2.2rem 2.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-banner::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      bottom: -40px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .header-banner h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-banner p {
+      font-size: 0.98rem;
+      opacity: 0.9;
+      font-weight: 400;
+      max-width: 700px;
+      line-height: 1.5;
+    }
+
+    /* DASHBOARD GRID - ATALHOS RÁPIDOS */
+    .shortcuts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .shortcut-card {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+      text-decoration: none;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .shortcut-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px -5px rgba(30, 58, 138, 0.12), 0 10px 12px -6px rgba(30, 58, 138, 0.08);
+      border-color: var(--blue-light);
+    }
+
+    .shortcut-card .icon-box {
+      font-size: 1.6rem;
+      color: var(--blue-primary);
+      background: var(--blue-soft);
+      border: 1px solid var(--blue-light);
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.25s ease;
+    }
+
+    .shortcut-card:hover .icon-box {
+      background: var(--blue-primary);
+      color: var(--white);
+      border-color: var(--blue-primary);
+    }
+
+    .shortcut-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      flex: 1;
+    }
+
+    .shortcut-info h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--blue-navy);
+      line-height: 1.2;
+    }
+
+    .shortcut-info p {
+      color: var(--gray-medium);
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+
+    .shortcut-card .arrow-icon {
+      font-size: 1.1rem;
+      color: var(--gray-medium);
+      opacity: 0.5;
+      transition: all 0.25s ease;
+    }
+
+    .shortcut-card:hover .arrow-icon {
+      opacity: 1;
+      color: var(--blue-primary);
+      transform: translateX(3px);
+    }
+
+    /* FRASE DO DIA */
+    .card {
+      background-color: var(--white);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+
+    .quote-of-day-card {
+      background-color: var(--white);
+      padding: 1.6rem 2rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .quote-of-day-card h3 {
+      color: var(--blue-primary);
+      margin-bottom: 0.6rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .quote-of-day-card p {
+      font-size: 1.02rem;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* STATUS DA REVISÃO ESPAÇADA */
+    .revisao-status-card {
+      margin-bottom: 1.8rem;
+      background-color: var(--white);
+      padding: 1.5rem 1.8rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+      transition: all 0.3s ease;
+    }
+
+    .revisao-status-card.atrasado {
+      border-color: #EF476F;
+      background-color: #FFF5F5;
+    }
+
+    .revisao-status-card.em-dia {
+      border-color: var(--success-green);
+      background-color: var(--success-green-bg);
+    }
+
+    .revisao-status-card.vazio {
+      border-color: var(--gray-light);
+      background-color: var(--white);
+    }
+
+    .revisao-status-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .revisao-status-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .revisao-status-card.atrasado .revisao-status-icon {
+      background: #EF476F;
+      color: var(--white);
+      animation: pulseAlarm 1.2s infinite ease-in-out;
+    }
+
+    .revisao-status-card.em-dia .revisao-status-icon {
+      background: var(--success-green);
+      color: var(--white);
+    }
+
+    .revisao-status-card.vazio .revisao-status-icon {
+      background: var(--blue-soft);
+      color: var(--gray-medium);
+      border: 1px solid var(--gray-light);
+    }
+
+    .revisao-status-text h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--blue-navy);
+    }
+
+    .revisao-status-text p {
+      font-size: 0.88rem;
+      color: var(--gray-medium);
+      font-weight: 500;
+    }
+
+    .revisao-status-card.atrasado .revisao-status-text p {
+      color: #D90429;
+      font-weight: 700;
+    }
+
+    .revisao-status-card.em-dia .revisao-status-text p {
+      color: var(--success-green);
+      font-weight: 700;
+    }
+
+    .btn-ir-revisao {
+      background: var(--blue-primary);
+      color: var(--white);
+      text-decoration: none;
+      padding: 0.65rem 1.3rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-ir-revisao:hover {
+      transform: translateY(-2px);
+      background-color: var(--blue-hover);
+    }
+
+    /* PROGRESSO GERAL DO CURSO */
+    .dashboard-progress-card {
+      margin-bottom: 1.8rem;
+      background-color: var(--white);
+      padding: 1.5rem 1.8rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-light);
+    }
+
+    .dashboard-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .dashboard-progress-header span {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--blue-navy);
+    }
+
+    .dashboard-progress-header strong {
+      color: var(--blue-primary);
+      font-size: 1.05rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      background-color: var(--gray-light);
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue-accent), var(--blue-primary));
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BOTÃO FLUTUANTE MENU -->
+  <button class="floating-menu-btn" id="open-sidebar" aria-label="Abrir Menu">
+    <i class="ph ph-list"></i>
+  </button>
+
+  <!-- OVERLAY MASCARA DE SOMBREAMENTO -->
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <!-- SIDEBAR LATERAL FLUTUANTE -->
+  <aside class="sidebar-floating" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <i class="ph ph-flask"></i>
+        <h1>Química Orgânica II <span>UFCG</span></h1>
+      </div>
+      <button class="close-sidebar-btn" id="close-sidebar" aria-label="Fechar Menu">
+        <i class="ph ph-x"></i>
+      </button>
+    </div>
+
+    <!-- ABAS LATERAIS DO PROJETO -->
+    <nav class="nav-sidebar">
+      <a href="index.html" class="nav-link active">
+        <i class="ph ph-house-line"></i> Início
+      </a>
+      <a href="matriz.html" class="nav-link">
+        <i class="ph ph-table"></i> Matriz
+      </a>
+      <a href="checklist.html" class="nav-link">
+        <i class="ph ph-check-square"></i> Checklist
+      </a>
+      <a href="cronometro.html" class="nav-link">
+        <i class="ph ph-timer"></i> Cronômetro/Pomodoro
+      </a>
+      <a href="cronograma.html" class="nav-link">
+        <i class="ph ph-calendar"></i> Cronograma Semanal
+      </a>
+      <a href="revisao.html" class="nav-link">
+        <i class="ph ph-brain"></i> Revisão Espaçada
+        <i class="ph ph-bell-ringing alarm-badge" id="revisao-alarm-icon" title="Existem revisões atrasadas!"></i>
+      </a>
+      <a href="descompressao.html" class="nav-link">
+        <i class="ph ph-heartbeat"></i> Descompressão
+      </a>
+    </nav>
+  </aside>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <main class="main-container">
+    
+    <div class="header-banner">
+      <h2>Plataforma de Química Orgânica II - UFCG</h2>
+      <p>Suporte de estudos direcionado para os cursos de Farmácia e Química. Acompanhe seu progresso e mantenha suas revisões em dia.</p>
+    </div>
+
+    <!-- ATALHOS RÁPIDOS NO LUGAR DAS MÉTRICAS -->
+    <div class="shortcuts-grid">
+      <a href="matriz.html" class="shortcut-card">
+        <div class="icon-box">
+          <i class="ph ph-table"></i>
+        </div>
+        <div class="shortcut-info">
+          <h3>Matriz de Conteúdos</h3>
+          <p>Acesse o programa da disciplina</p>
+        </div>
+        <i class="ph ph-caret-right arrow-icon"></i>
+      </a>
+
+      <a href="checklist.html" class="shortcut-card">
+        <div class="icon-box">
+          <i class="ph ph-check-square"></i>
+        </div>
+        <div class="shortcut-info">
+          <h3>Checklist Qualitativo</h3>
+          <p>Marque tópicos concluídos</p>
+        </div>
+        <i class="ph ph-caret-right arrow-icon"></i>
+      </a>
+
+      <a href="cronometro.html" class="shortcut-card">
+        <div class="icon-box">
+          <i class="ph ph-timer"></i>
+        </div>
+        <div class="shortcut-info">
+          <h3>Pomodoro & Foco</h3>
+          <p>Inicie uma sessão de estudos</p>
+        </div>
+        <i class="ph ph-caret-right arrow-icon"></i>
+      </a>
+
+      <a href="cronograma.html" class="shortcut-card">
+        <div class="icon-box">
+          <i class="ph ph-calendar-blank"></i>
+        </div>
+        <div class="shortcut-info">
+          <h3>Cronograma Semanal</h3>
+          <p>Planeje seu horário da semana</p>
+        </div>
+        <i class="ph ph-caret-right arrow-icon"></i>
+      </a>
+    </div>
+
+    <!-- FRASE MOTIVACIONAL DO DIA -->
+    <div class="card quote-of-day-card">
+      <h3><i class="ph ph-quotes"></i> Reflexão de Estudo</h3>
+      <p id="frase-do-dia">Carregando frase motivacional do dia...</p>
+    </div>
+
+    <!-- STATUS DAS REVISÕES ESPAÇADAS -->
+    <div class="revisao-status-card" id="card-status-revisao">
+      <div class="revisao-status-info">
+        <div class="revisao-status-icon" id="revisao-status-icon">
+          <i class="ph ph-info"></i>
+        </div>
+        <div class="revisao-status-text">
+          <h4>Revisões Espaçadas</h4>
+          <p id="revisao-status-mensagem">Carregando status...</p>
+        </div>
+      </div>
+      <a href="revisao.html" class="btn-ir-revisao">
+        <i class="ph ph-arrow-right"></i> Ir para Revisões
+      </a>
+    </div>
+
+  </main>
+
+  <!-- CARREGA O SCRIPT GLOBAL -->
+  <script src="app.js"></script>
+
+  <!-- SCRIPT COMPLEMENTAR DE INTERFACE DA PÁGINA INICIAL -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // 1. Controle da Sidebar (Menu Flutuante e Overlay)
+      const openSidebarBtn = document.getElementById('open-sidebar');
+      const closeSidebarBtn = document.getElementById('close-sidebar');
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('overlay');
+
+      function openMenu() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+      }
+
+      function closeMenu() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+      }
+
+      if (openSidebarBtn) openSidebarBtn.addEventListener('click', openMenu);
+      if (closeSidebarBtn) closeSidebarBtn.addEventListener('click', closeMenu);
+      if (overlay) overlay.addEventListener('click', closeMenu);
+
+      // 2. Atualização do progresso com base na Matriz/Checklist do userState
+      function atualizarMetricas() {
+        let totalTopicos = 0;
+        let concluidos = 0;
+
+        if (window.userState && window.userState.checklistData) {
+          const checklist = window.userState.checklistData;
+          for (let key in checklist) {
+            totalTopicos++;
+            if (checklist[key] === true) {
+              concluidos++;
+            }
+          }
+        }
+
+        if (window.matrizQuimicaData) {
+          totalTopicos = window.matrizQuimicaData.reduce((acc, modulo) => acc + modulo.subtopicos.length, 0);
+        }
+
+        const pct = totalTopicos > 0 ? Math.round((concluidos / totalTopicos) * 100) : 0;
+        
+        const elProgressoTexto = document.getElementById('progresso-texto');
+        if (elProgressoTexto) elProgressoTexto.textContent = `${pct}%`;
+
+        const elProgressoBar = document.getElementById('progresso-bar');
+        if (elProgressoBar) elProgressoBar.style.width = `${pct}%`;
+      }
+
+      // 3. Atualização do status visual da Revisão Espaçada
+      function atualizarStatusRevisoes() {
+        const cardStatus = document.getElementById('card-status-revisao');
+        const iconContainer = document.getElementById('revisao-status-icon');
+        const mensagemTexto = document.getElementById('revisao-status-mensagem');
+        const alarmIconSidebar = document.getElementById('revisao-alarm-icon');
+
+        const revisoes = (window.userState && window.userState.revisaoData) || [];
+        const hoje = new Date().toISOString().split('T')[0];
+        
+        const atrasadas = revisoes.filter(r => !r.concluida && r.dataRevisao < hoje);
+
+        if (revisoes.length === 0) {
+          if (cardStatus) cardStatus.className = 'revisao-status-card vazio';
+          if (iconContainer) iconContainer.innerHTML = '<i class="ph ph-info"></i>';
+          if (mensagemTexto) mensagemTexto.textContent = 'Verifique suas revisões e não deixe acumular!';
+          if (alarmIconSidebar) alarmIconSidebar.style.display = 'none';
+        } else if (atrasadas.length > 0) {
+          if (cardStatus) cardStatus.className = 'revisao-status-card atrasado';
+          if (iconContainer) iconContainer.innerHTML = '<i class="ph ph-warning-circle"></i>';
+          if (mensagemTexto) mensagemTexto.textContent = `Verifique suas revisões e não deixe acumular!`;
+          if (alarmIconSidebar) alarmIconSidebar.style.display = 'inline-block';
+        } else {
+          if (cardStatus) cardStatus.className = 'revisao-status-card em-dia';
+          if (iconContainer) iconContainer.innerHTML = '<i class="ph ph-check-circle"></i>';
+          if (mensagemTexto) mensagemTexto.textContent = 'Verifique suas revisões e não deixe acumular!';
+          if (alarmIconSidebar) alarmIconSidebar.style.display = 'none';
+        }
+      }
+
+      // Estende a função refreshAllUI do app.js para atualizar a interface dinamicamente
+      const originalRefreshUI = window.refreshAllUI;
+      window.refreshAllUI = function() {
+        if (typeof originalRefreshUI === 'function') originalRefreshUI();
+        atualizarMetricas();
+        atualizarStatusRevisoes();
+      };
+
+      // Execução inicial
+      atualizarMetricas();
+      atualizarStatusRevisoes();
+    });
+  </script>
+</body>
+</html>
